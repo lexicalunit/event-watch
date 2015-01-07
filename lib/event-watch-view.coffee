@@ -4,22 +4,31 @@ class EventWatchView extends HTMLElement
 
   initialize: (@statusBar) ->
     @classList.add('inline-block')
-    @label = @createSpan()
+
+    # TODO: Way to do this that won't change event order on warn?
+    div = @createElement('div', 'event-watch', 'inline-block')
+    @warn_label = @createElement('span', 'warn', 'inline-block')
+    @info_label = @createElement('span', 'info', 'inline-block')
+    div.appendChild(@warn_label)
+    div.appendChild(@info_label)
+    @appendChild(div)
+
     @data = atom.config.get('event-watch.data')
+    @interval = 0
 
   attach: ->
     @statusBar?.appendRight(this)
     @setUpdate()
     @update() # inital update
 
-  createSpan: ->
-    span = document.createElement('span')
-    span.classList.add('event-watch', 'inline-block')
-    span.textContent = ''
-    @appendChild(span)
+  createElement: (type, classes...) ->
+    element = document.createElement(type)
+    element.classList.add(classes...)
+    return element
 
   parseTime: (timeStr) ->
-    # parse time string returning Date object
+    # tries to parse a time string and return a Date object
+    # TODO: isn't there a library function I could use instead?
     time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i)
     if !time
       return NaN
@@ -36,19 +45,17 @@ class EventWatchView extends HTMLElement
     dt.setSeconds(0, 0)
     return dt
 
-  forceTwoDigits: (val) ->
-    if val < 10
-      return "0#{val}"
-    return val
-
   formatTime: (date) ->
-    # Formate date object as HH:MM(p)
+    # returns time string formatted as HH:MM[p]
+    # TODO: isn't there a library function I could use instead?
     hour = date.getHours()
     minute = date.getMinutes()
     suffix = '';
     if hour >= 12
       suffix = 'p';
       hour = hour - 12;
+    if minute < 10
+      minute = "0#{minute}"
     return "#{hour}:#{minute}#{suffix}"
 
   nextClosestTime: (currentDate, times) ->
@@ -56,28 +63,44 @@ class EventWatchView extends HTMLElement
     for time in times
       dt = @parseTime(time)
       if dt > currentDate
-        return @formatTime(dt)
+        return dt
     return NaN
 
   setUpdate: ->
     # get interval from config, or set and save default
-    interval = atom.config.get('event-watch.intervalMinutes')
-    if interval
-      interval = interval * 60 * 1000
+    @interval = atom.config.get('event-watch.intervalMinutes')
+    if @interval
+      @interval = @interval * 60 * 1000
     else
-      interval = 300000 # 5 minute default
-      atom.config.set('event-watch.intervalMinutes', interval / 60000)
-    setInterval (=> @update()), interval
+      @interval = 300000 # 5 minute default
+      atom.config.set('event-watch.intervalMinutes', @interval / 60000)
+    setInterval (=> @update()), @interval
 
   update: ->
     currentDate = new Date
+    warn = []
     info = []
     for name, times of @data
       next = @nextClosestTime(currentDate, times)
-      if next
-        info.push name + '[' + next + ']'
+      if !next
+        continue
+
+      # TODO: Make the format configurable
+      if name.length and name[0] != '-'
+        text = name + '[' + @formatTime(next) + ']'
+      else
+        text = @formatTime(next)
+
+      # TODO: Make alert threshold configurable
+      if next - currentDate <= 3 * @interval
+        warn.push text
+      else
+        info.push text
+
     if info.length
-      @label.textContent = info.join(' ')
+      @info_label.textContent = info.join(' ')
+    if warn.length
+      @warn_label.textContent = warn.join(' ')
 
 module.exports = document.registerElement('event-watch',
                                           prototype: EventWatchView.prototype,

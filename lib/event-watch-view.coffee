@@ -4,21 +4,25 @@ class EventWatchView extends HTMLElement
 
   # Create initial view state and element.
   initialize: (@statusBar) ->
-    @classList.add('inline-block') # necessiary to make this view visible
-    @view = @createElement('div', 'event-watch', 'inline-block')
+    @view = @createElement('a', 'event-watch', 'inline-block')
     @data = {}
     @refreshIntervalMiliseconds = 0
     @warnThresholdMiliseconds = 0
     @displayFormat = ''
+
+  # Destroys and removes this view.
+  destroy: ->
+    @clickSubscription?.dispose()
+    @remove()
 
   # Attach view element to status bar and do initial setup.
   attach: ->
     @statusBar?.addLeftTile(item: this, priority: 200) # far right side
     @setup()
 
-  # Do initial setup steps for view, such as configuration and update.
+  # Do all initial setup for view and configuration.
   setup: ->
-    @appendChild(@view)
+    @setupView()
 
     @data = atom.config.get('event-watch.data')
 
@@ -32,6 +36,22 @@ class EventWatchView extends HTMLElement
 
     @update() # immediate initial update
     setInterval((=> @update()), @refreshIntervalMiliseconds)
+
+    atom.workspaceView.command('event-watch:update', (=> @update()))
+
+  # Do initial setup for this view.
+  setupView: ->
+    @view.href = '#'
+
+    clickHandler = ->
+      @update()
+      return false
+
+    @addEventListener('click', clickHandler)
+    @clickSubscription = dispose: => @removeEventListener('click', clickHandler)
+
+    @classList.add('inline-block') # necessiary to make this view visible
+    @appendChild(@view)
 
   # Tries to parse a time string and return a Date object.
   parseTime: (timeStr) ->

@@ -17,7 +17,7 @@ class EventWatchView extends HTMLElement
     @interval = 0
 
   attach: ->
-    @statusBar?.appendRight(this)
+    @statusBar?.addLeftTile(item: this, priority: 200)
     @setUpdate()
     @update() # inital update
 
@@ -97,10 +97,8 @@ class EventWatchView extends HTMLElement
       else
         info.push text
 
-    if info.length
-      @info_label.textContent = info.join(' ')
-    if warn.length
-      @warn_label.textContent = warn.join(' ')
+    @info_label.textContent = info.join(' ')
+    @warn_label.textContent = warn.join(' ')
 
 module.exports = document.registerElement('event-watch',
                                           prototype: EventWatchView.prototype,

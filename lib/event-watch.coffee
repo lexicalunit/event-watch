@@ -2,8 +2,8 @@ class EventWatch
   view: null
 
   activate: ->
-    atom.packages.once 'activated', =>
-      {statusBar} = atom.workspaceView
+    atom.packages.once 'activated', ->
+      statusBar = document.querySelector('status-bar')
       if statusBar?
         EventWatchView = require './event-watch-view'
         @view = new EventWatchView

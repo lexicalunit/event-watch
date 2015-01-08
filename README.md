@@ -4,11 +4,22 @@ Based on the current time, displays the time of the next recurring event.
 
 For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
-My configuration:
+## Configuration
+
+| Configuration key | Description |
+| --- | --- |
+| `refreshIntervalMinutes` | The time between updates in minutes. |
+| `warnThresholdMinutes` | Events that will occur within this many minutes will be displayed in red. |
+| `displayFormat` | The display format for events; Both `$title` and `$time` will be interpolated with real values. |
+| `data` | A list of event titles each with their own list of recurring event times in 24-hour format. |
+
+My configuration, for example:
 
 ```cson
 'event-watch':
-  'intervalMinutes': 5
+  'refreshIntervalMinutes': 5
+  'warnThresholdMinutes': 15
+  'displayFormat': '$title: $time'
   'data':
     'Northbound': [
       '7:03'
@@ -52,10 +63,10 @@ My configuration:
     ]
 ```
 
-So, for example, if the current time is `9:30`:
+So if my current time is `9:25`:
 
-![alt tag](https://cloud.githubusercontent.com/assets/1903876/5638980/a283802c-95d4-11e4-8731-0eae860752d6.png)
+![alt tag](https://cloud.githubusercontent.com/assets/1903876/5672524/a2be36da-9756-11e4-9fde-581aaa2f7c38.png)
 
-And if the current time is `6:15pm`:
+And if my current time is `6:15pm`:
 
-![alt tag](https://cloud.githubusercontent.com/assets/1903876/5638979/a15a228c-95d4-11e4-9d05-ff901fef1955.png)
+![alt tag](https://cloud.githubusercontent.com/assets/1903876/5672525/a408b218-9756-11e4-94f2-9ffc62aa13b7.png)

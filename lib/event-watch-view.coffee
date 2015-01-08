@@ -2,33 +2,39 @@
 
 class EventWatchView extends HTMLElement
 
+  # Create initial view state and element.
   initialize: (@statusBar) ->
-    @classList.add('inline-block')
+    @classList.add('inline-block') # necessiary to make this view visible
+    @view = @createElement('div', 'event-watch', 'inline-block')
+    @data = {}
+    @refreshIntervalMiliseconds = 0
+    @warnThresholdMiliseconds = 0
+    @displayFormat = ''
 
-    # TODO: Way to do this that won't change event order on warn?
-    div = @createElement('div', 'event-watch', 'inline-block')
-    @warn_label = @createElement('span', 'warn', 'inline-block')
-    @info_label = @createElement('span', 'info', 'inline-block')
-    div.appendChild(@warn_label)
-    div.appendChild(@info_label)
-    @appendChild(div)
+  # Attach view element to status bar and do initial setup.
+  attach: ->
+    @statusBar?.addLeftTile(item: this, priority: 200) # far right side
+    @setup()
+
+  # Do initial setup steps for view, such as configuration and update.
+  setup: ->
+    @appendChild(@view)
 
     @data = atom.config.get('event-watch.data')
-    @interval = 0
 
-  attach: ->
-    @statusBar?.addLeftTile(item: this, priority: 200)
-    @setUpdate()
-    @update() # inital update
+    refreshIntervalMinutes = @getConfig('event-watch.refreshIntervalMinutes', 5)
+    @refreshIntervalMiliseconds = refreshIntervalMinutes * 60000
 
-  createElement: (type, classes...) ->
-    element = document.createElement(type)
-    element.classList.add(classes...)
-    return element
+    warnThresholdMinutes = @getConfig('event-watch.warnThresholdMinutes', 3 * refreshIntervalMinutes)
+    @warnThresholdMiliseconds = warnThresholdMinutes * 60000
 
+    @displayFormat = @getConfig('event-watch.displayFormat', '$title: $time')
+
+    @update() # immediate initial update
+    setInterval((=> @update()), @refreshIntervalMiliseconds)
+
+  # Tries to parse a time string and return a Date object.
   parseTime: (timeStr) ->
-    # tries to parse a time string and return a Date object
-    # TODO: isn't there a library function I could use instead?
     time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i)
     if !time
       return NaN
@@ -45,60 +51,75 @@ class EventWatchView extends HTMLElement
     dt.setSeconds(0, 0)
     return dt
 
+  # Returns time string formatted as HH:MM[p].
   formatTime: (date) ->
-    # returns time string formatted as HH:MM[p]
-    # TODO: isn't there a library function I could use instead?
     hour = date.getHours()
     minute = date.getMinutes()
-    suffix = '';
+    pm = '';
     if hour >= 12
-      suffix = 'p';
+      pm = 'p';
       hour = hour - 12;
     if minute < 10
       minute = "0#{minute}"
-    return "#{hour}:#{minute}#{suffix}"
+    return "#{hour}:#{minute}#{pm}"
 
+  # Create DOM element of given type with given classes.
+  createElement: (type, classes...) ->
+    element = document.createElement(type)
+    element.classList.add(classes...)
+    return element
+
+  # Return next closest time from times to the current time, NaN otherwise.
   nextClosestTime: (currentDate, times) ->
-    # gets the next closest time following the currentDate, NaN otherwise
     for time in times
       dt = @parseTime(time)
       if dt > currentDate
         return dt
     return NaN
 
-  setUpdate: ->
-    # get interval from config, or set and save default
-    @interval = atom.config.get('event-watch.intervalMinutes')
-    if @interval
-      @interval = @interval * 60 * 1000
-    else
-      @interval = 300000 # 5 minute default
-      atom.config.set('event-watch.intervalMinutes', @interval / 60000)
-    setInterval (=> @update()), @interval
+  # Grab given key from Atom config, or set it to fallback if not there.
+  getConfig: (key, fallback) ->
+    value = atom.config.get(key)
+    if !value
+      value = fallback
+      atom.config.set(key, value)
+    return value
 
+  # Refresh view with current event information.
   update: ->
     currentDate = new Date
-    warn = []
-    info = []
-    for name, times of @data
+    events = []
+
+    for title, times of @data
+      # ignore missing titles and those starting with -
+      if !title.length or title[0] == '-'
+        continue
+
+      # find next closest recurring event time
       next = @nextClosestTime(currentDate, times)
       if !next
         continue
 
-      # TODO: Make the format configurable
-      if name.length and name[0] != '-'
-        text = name + '[' + @formatTime(next) + ']'
-      else
-        text = @formatTime(next)
+      # apply display format
+      text = @displayFormat.slice(0)
+        .replace(/\$time/g, @formatTime(next))
+        .replace(/\$title/g, title)
 
-      # TODO: Make alert threshold configurable
-      if next - currentDate <= 3 * @interval
-        warn.push text
-      else
-        info.push text
+      # create event view element
+      eventClasses = ['inline-block']
+      if next - currentDate <= @warnThresholdMiliseconds
+        eventClasses.push('warn')
+      event = @createElement('span', eventClasses...)
+      event.textContent = text
 
-    @info_label.textContent = info.join(' ')
-    @warn_label.textContent = warn.join(' ')
+      events.push(event)
+
+    # remove existing view elements first
+    while @view.firstChild
+      @view.removeChild(@view.firstChild)
+
+    for event in events
+      @view.appendChild(event)
 
 module.exports = document.registerElement('event-watch',
                                           prototype: EventWatchView.prototype,

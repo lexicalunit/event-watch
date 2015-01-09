@@ -69,4 +69,4 @@ So if my current time is `9:25`:
 
 And if my current time is `6:15pm`:
 
-![alt tag](https://cloud.githubusercontent.com/assets/1903876/5672525/a408b218-9756-11e4-94f2-9ffc62aa13b7.png)
+![alt tag](https://cloud.githubusercontent.com/assets/1903876/5673870/7bac361c-9767-11e4-884a-a047154410c8.png)

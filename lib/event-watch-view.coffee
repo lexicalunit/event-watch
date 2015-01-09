@@ -54,7 +54,11 @@ class EventWatchView extends HTMLElement
     @appendChild(@view)
 
   # Tries to parse a time string and return a Date object.
-  parseTime: (timeStr) ->
+  parseTime: (timeStr, day) ->
+    dt = day
+    if !dt
+      dt = new Date()
+
     time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i)
     if !time
       return NaN
@@ -65,7 +69,6 @@ class EventWatchView extends HTMLElement
     else
       hours += (hours < 12 && time[3]) ? 12 : 0
 
-    dt = new Date()
     dt.setHours(hours)
     dt.setMinutes(parseInt(time[2], 10) || 0)
     dt.setSeconds(0, 0)
@@ -95,6 +98,12 @@ class EventWatchView extends HTMLElement
       dt = @parseTime(time)
       if dt > currentDate
         return dt
+
+    # return earliest time tomorrow if none today
+    tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if times.length
+      return @parseTime(times[0], tomorrow)
     return NaN
 
   # Grab given key from Atom config, or set it to fallback if not there.

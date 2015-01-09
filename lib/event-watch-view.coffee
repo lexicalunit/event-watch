@@ -3,12 +3,15 @@
 class EventWatchView extends HTMLElement
 
   # Create initial view state and element.
-  initialize: (@statusBar) ->
+  initialize: (@statusBar, subscriptions) ->
     @view = @createElement('a', 'event-watch', 'inline-block')
     @data = {}
     @refreshIntervalMiliseconds = 0
     @warnThresholdMiliseconds = 0
     @displayFormat = ''
+
+    # TODO: Move this somewhere else?
+    subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:update': => @update()
 
   # Destroys and removes this view.
   destroy: ->
@@ -36,8 +39,6 @@ class EventWatchView extends HTMLElement
 
     @update() # immediate initial update
     setInterval((=> @update()), @refreshIntervalMiliseconds)
-
-    atom.workspaceView.command('event-watch:update', (=> @update()))
 
   # Do initial setup for this view.
   setupView: ->
@@ -78,10 +79,10 @@ class EventWatchView extends HTMLElement
   formatTime: (date) ->
     hour = date.getHours()
     minute = date.getMinutes()
-    pm = '';
+    pm = ''
     if hour >= 12
-      pm = 'p';
-      hour = hour - 12;
+      pm = 'p'
+      hour = hour - 12
     if minute < 10
       minute = "0#{minute}"
     return "#{hour}:#{minute}#{pm}"
@@ -100,8 +101,8 @@ class EventWatchView extends HTMLElement
         return dt
 
     # return earliest time tomorrow if none today
-    tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
     if times.length
       return @parseTime(times[0], tomorrow)
     return NaN

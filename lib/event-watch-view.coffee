@@ -54,21 +54,22 @@ class EventWatchView extends HTMLElement
     @classList.add('inline-block') # necessiary to make this view visible
     @appendChild(@view)
 
-  # Tries to parse a time string and return a Date object.
+  # Tries to parse a time string and return a Date object and days string.
   parseTime: (timeStr, day) ->
     dt = day
     if !dt
       dt = new Date()
 
-    time = timeStr.match(/(\d+)(?::(\d\d))?\s*(am|pm)?/i)
+    time = timeStr.match(/([0123456]{1,7})?\s*(\d+)(?::(\d\d))?\s*(am|pm)?/i)
     if !time
       return NaN
 
-    hour = parseInt(time[1], 10)
-    minute = parseInt(time[2], 10) || 0
-    ampm = time[3]
+    weekDay = time[1]
+    hour = parseInt(time[2], 10)
+    minute = parseInt(time[3], 10) || 0
+    ampm = time[4]
     am = (!ampm || ampm.toLowerCase() == 'am')
-    pm = (ampm && ampm.toLowerCase() == 'pm')
+    pm = (!!ampm && ampm.toLowerCase() == 'pm')
 
     if hour == 12 && am
         hour = 0
@@ -78,7 +79,7 @@ class EventWatchView extends HTMLElement
     dt.setHours(hour)
     dt.setMinutes(minute)
     dt.setSeconds(0, 0)
-    return dt
+    return [dt, weekDay]
 
   # Returns time string formatted as HH:MM[p].
   formatTime: (date) ->
@@ -98,18 +99,33 @@ class EventWatchView extends HTMLElement
     element.classList.add(classes...)
     return element
 
+  # Return true if day is in the given days string or days is falsey.
+  occursOn: (day, days) ->
+    if !days
+      return true
+
+    dt = day
+    if !dt
+      dt = new Date()
+
+    return days.indexOf(dt.getDay()) != -1
+
   # Return next closest time from times to the current time, NaN otherwise.
   nextClosestTime: (currentDate, times) ->
+    today = new Date()
     for time in times
-      dt = @parseTime(time)
-      if dt > currentDate
+      [dt, days] = @parseTime(time)
+      if dt > currentDate && @occursOn(today, days)
         return dt
 
-    # return earliest time tomorrow if none today
+    # fallback to earliest time tomorrow
     tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     if times.length
-      return @parseTime(times[0], tomorrow)
+      [dt, days] = @parseTime(times[0], tomorrow)
+      if @occursOn(days, tomorrow)
+        return dt
+
     return NaN
 
   # Grab given key from Atom config, or set it to fallback if not there.

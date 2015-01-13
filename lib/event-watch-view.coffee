@@ -9,6 +9,7 @@ class EventWatchView extends HTMLElement
     @refreshIntervalMiliseconds = 0
     @warnThresholdMiliseconds = 0
     @displayFormat = ''
+    @eventFormat = /([0123456]{1,7})?\s*(\d+)(?::(\d\d))?\s*(am|pm)?/i
 
     # TODO: Move this somewhere else?
     subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:update': => @update()
@@ -54,17 +55,16 @@ class EventWatchView extends HTMLElement
     @classList.add('inline-block') # necessiary to make this view visible
     @appendChild(@view)
 
-  # Tries to parse a time string and return a Date object and days string.
+  # Tries to parse an event spec and return a Date object.
   parseTime: (timeStr, day) ->
     dt = day
     if !dt
       dt = new Date()
 
-    time = timeStr.match(/([0123456]{1,7})?\s*(\d+)(?::(\d\d))?\s*(am|pm)?/i)
+    time = timeStr.match(@eventFormat)
     if !time
       return NaN
 
-    weekDay = time[1]
     hour = parseInt(time[2], 10)
     minute = parseInt(time[3], 10) || 0
     ampm = time[4]
@@ -79,7 +79,14 @@ class EventWatchView extends HTMLElement
     dt.setHours(hour)
     dt.setMinutes(minute)
     dt.setSeconds(0, 0)
-    return [dt, weekDay]
+    return dt
+
+  # Tries to parse an event spec for a days of the week list.
+  parseDays: (timeStr) ->
+    time = timeStr.match(@eventFormat)
+    if !time
+      return ''
+    return time[1]
 
   # Returns time string formatted as HH:MM[p].
   formatTime: (date) ->
@@ -99,31 +106,22 @@ class EventWatchView extends HTMLElement
     element.classList.add(classes...)
     return element
 
-  # Return true if day is in the given days string or days is falsey.
-  occursOn: (day, days) ->
-    if !days
-      return true
-
-    dt = day
-    if !dt
-      dt = new Date()
-
-    return days.indexOf(dt.getDay()) != -1
-
   # Return next closest time from times to the current time, NaN otherwise.
   nextClosestTime: (currentDate, times) ->
     today = new Date()
     for time in times
-      [dt, days] = @parseTime(time)
-      if dt > currentDate && @occursOn(today, days)
+      dt = @parseTime(time)
+      days = @parseDays(time)
+      if dt > currentDate && (!days || days.indexOf(today.getDay()) != -1)
         return dt
 
     # fallback to earliest time tomorrow
     tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     if times.length
-      [dt, days] = @parseTime(times[0], tomorrow)
-      if @occursOn(days, tomorrow)
+      dt = @parseTime(times[0], tomorrow)
+      days = @parseDays(times[0])
+      if !days || days.indexOf(tomorrow.getDay()) != -1
         return dt
 
     return NaN

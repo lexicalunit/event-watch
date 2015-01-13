@@ -60,18 +60,23 @@ class EventWatchView extends HTMLElement
     if !dt
       dt = new Date()
 
-    time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i)
+    time = timeStr.match(/(\d+)(?::(\d\d))?\s*(am|pm)?/i)
     if !time
       return NaN
 
-    hours = parseInt(time[1], 10)
-    if hours == 12 && !time[3]
-        hours = 0
-    else
-      hours += (hours < 12 && time[3]) ? 12 : 0
+    hour = parseInt(time[1], 10)
+    minute = parseInt(time[2], 10) || 0
+    ampm = time[3]
+    am = (!ampm || ampm.toLowerCase() == 'am')
+    pm = (ampm && ampm.toLowerCase() == 'pm')
 
-    dt.setHours(hours)
-    dt.setMinutes(parseInt(time[2], 10) || 0)
+    if hour == 12 && am
+        hour = 0
+    else
+      hour += (hour < 12 && pm) ? 12 : 0
+
+    dt.setHours(hour)
+    dt.setMinutes(minute)
     dt.setSeconds(0, 0)
     return dt
 

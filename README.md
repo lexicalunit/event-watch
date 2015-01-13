@@ -26,7 +26,7 @@ Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 | --- | --- |
 | `refreshIntervalMinutes` | The time between updates in minutes. |
 | `warnThresholdMinutes` | Events that will occur within this many minutes will be displayed in red. |
-| `displayFormat` | The display format for events; Both `$title` and `$time` will be interpolated with real values. |
+| `displayFormat` | The display format for events. <ul><li>`$title`: The title of the event as defined by the key in `data`.</li><li>`$time`: The time of day of the next occurring event.</li><li>`$tminus`: The time remaining until the next occurring event.</li></ul> |
 | `data` | A list of event titles each with their own list of recurring event times in 24-hour format. |
 | `data` time format | `'[0123456] HH:MM [am/pm]'` - The `0123456` part indicates on what days this event occurs on. Leave off to indicate every day of the week. |
 

@@ -88,7 +88,28 @@ class EventWatchView extends HTMLElement
       return ''
     return time[1]
 
-  # Returns time string formatted as HH:MM[p].
+  # Returns time remaining string formatted as 'T-[D days] HH:MM'.
+  formatTminus: (date) ->
+    now = new Date()
+    distance = date - now
+
+    SECOND = 1000
+    MINUTE = SECOND * 60
+    HOUR = MINUTE * 60
+    DAY = HOUR * 24
+
+    days = distance // DAY
+    hours = (distance % DAY) // HOUR
+    minutes = (distance % HOUR) // MINUTE
+    # seconds = (distance % MINUTE) // SECOND
+
+    rvalue = "#{hours}:#{minutes}"
+    if days > 0
+      rvalue = "#{days}days " + rvalue
+    rvalue = 'T-' + rvalue
+    return rvalue
+
+  # Returns time string formatted as 'HH:MM[p]'.
   formatTime: (date) ->
     hour = date.getHours()
     minute = date.getMinutes()
@@ -151,8 +172,9 @@ class EventWatchView extends HTMLElement
 
       # apply display format
       text = @displayFormat.slice(0)
-        .replace(/\$time/g, @formatTime(next))
         .replace(/\$title/g, title)
+        .replace(/\$time/g, @formatTime(next))
+        .replace(/\$tminus/g, @formatTminus(next))
 
       # create event view element
       eventClasses = ['inline-block']

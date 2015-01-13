@@ -4,6 +4,22 @@ Based on the current time, displays the time of the next recurring event.
 
 For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
+![morning-screenshot](https://cloud.githubusercontent.com/assets/1903876/5672524/a2be36da-9756-11e4-9fde-581aaa2f7c38.png)
+
+## Installation
+
+### Command Line
+
+```bash
+apm install event-watch
+```
+
+### Atom
+
+```
+Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
+```
+
 ## Configuration
 
 | Configuration key | Description |
@@ -63,10 +79,10 @@ My configuration, for example:
     ]
 ```
 
-So if my current time is `9:25`:
+So if my current time is `9:25 AM`:
 
-![alt tag](https://cloud.githubusercontent.com/assets/1903876/5672524/a2be36da-9756-11e4-9fde-581aaa2f7c38.png)
+![morning-screenshot](https://cloud.githubusercontent.com/assets/1903876/5672524/a2be36da-9756-11e4-9fde-581aaa2f7c38.png)
 
-And if my current time is `6:15pm`:
+And if my current time is `6:15 PM`:
 
-![alt tag](https://cloud.githubusercontent.com/assets/1903876/5673870/7bac361c-9767-11e4-884a-a047154410c8.png)
+![evening-screenshot](https://cloud.githubusercontent.com/assets/1903876/5673870/7bac361c-9767-11e4-884a-a047154410c8.png)

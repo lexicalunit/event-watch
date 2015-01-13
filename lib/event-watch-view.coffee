@@ -103,6 +103,9 @@ class EventWatchView extends HTMLElement
     minutes = (distance % HOUR) // MINUTE
     # seconds = (distance % MINUTE) // SECOND
 
+    if minutes < 10
+      minutes = "0#{minutes}"
+
     rvalue = "#{hours}:#{minutes}"
     if days > 0
       rvalue = "#{days}days " + rvalue

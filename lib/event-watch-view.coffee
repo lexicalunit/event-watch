@@ -73,8 +73,8 @@ class EventWatchView extends HTMLElement
 
     if hour == 12 && am
         hour = 0
-    else
-      hour += (hour < 12 && pm) ? 12 : 0
+    else if hour < 12 && pm
+      hour = hour + 12
 
     dt.setHours(hour)
     dt.setMinutes(minute)

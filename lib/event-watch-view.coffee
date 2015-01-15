@@ -10,6 +10,8 @@ class EventWatchView extends HTMLElement
     @warnThresholdMiliseconds = 0
     @displayFormat = ''
     @eventFormat = /([0123456]{1,7})?\s*(\d+)(?::(\d\d))?\s*(am|pm)?/i
+    @timer = null
+    @hasWarning = false
 
     # TODO: Move this somewhere else?
     subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:update': => @update()
@@ -23,9 +25,10 @@ class EventWatchView extends HTMLElement
   attach: ->
     @statusBar?.addLeftTile(item: this, priority: 200) # far right side
     @setup()
+    @update() # immediate initial update
 
   # Do all initial setup for view and configuration.
-  setup: ->
+  setup: (interval) ->
     @setupView()
 
     @data = atom.config.get('event-watch.data')
@@ -38,8 +41,13 @@ class EventWatchView extends HTMLElement
 
     @displayFormat = @getConfig('event-watch.displayFormat', '$title: $time')
 
-    @update() # immediate initial update
-    setInterval((=> @update()), @refreshIntervalMiliseconds)
+    if !interval
+      interval = @refreshIntervalMiliseconds
+
+    if @timer
+      clearInterval(@timer)
+
+    @timer = setInterval((=> @update()), interval)
 
   # Do initial setup for this view.
   setupView: ->
@@ -163,6 +171,8 @@ class EventWatchView extends HTMLElement
     currentDate = new Date
     events = []
 
+    wasWarning = @hasWarning
+    @hasWarning = false
     for title, times of @data
       # ignore missing titles and those starting with -
       if !title.length or title[0] == '-'
@@ -183,6 +193,7 @@ class EventWatchView extends HTMLElement
       eventClasses = ['inline-block']
       if next - currentDate <= @warnThresholdMiliseconds
         eventClasses.push('warn')
+        @hasWarning = true
       event = @createElement('span', eventClasses...)
       event.textContent = text
 
@@ -194,6 +205,11 @@ class EventWatchView extends HTMLElement
 
     for event in events
       @view.appendChild(event)
+
+    if !wasWarning && @hasWarning
+      @setup(60000) # 1 minute refresh during warnings
+    else if wasWarning && !@hasWarning
+      @setup()
 
 module.exports = document.registerElement('event-watch',
                                           prototype: EventWatchView.prototype,

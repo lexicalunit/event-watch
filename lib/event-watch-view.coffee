@@ -12,13 +12,16 @@ class EventWatchView extends HTMLElement
     @eventFormat = /([0123456]{1,7})?\s*(\d+)(?::(\d\d))?\s*(am|pm)?/i
     @timer = null
     @hasWarning = false
-
-    # TODO: Move this somewhere else?
+    @tooltip = atom.tooltips.add(@view,
+      title: => @tooltipTile()
+      html: true
+    )
     subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:update': => @update()
 
   # Destroys and removes this view.
   destroy: ->
     @clickSubscription?.dispose()
+    @tooltip?.dispose()
     @remove()
 
   # Attach view element to status bar and do initial setup.
@@ -121,9 +124,9 @@ class EventWatchView extends HTMLElement
     return rvalue
 
   # Returns time string formatted as 'HH:MM[p]'.
-  formatTime: (date) ->
-    hour = date.getHours()
-    minute = date.getMinutes()
+  formatTime: (dt) ->
+    hour = dt.getHours()
+    minute = dt.getMinutes()
     pm = ''
     if hour >= 12
       pm = 'p'
@@ -166,45 +169,68 @@ class EventWatchView extends HTMLElement
       atom.config.set(key, value)
     return value
 
-  # Refresh view with current event information.
-  update: ->
-    currentDate = new Date
-    events = []
+  # Generate the content of the tooltip.
+  tooltipTile: ->
+    tip = ''
+    for event in @getEvents()
+      text = '$title: $time [$tminus]<br />'
+        .replace(/\$title/g, event.title)
+        .replace(/\$time/g, @formatTime(event.next))
+        .replace(/\$tminus/g, @formatTminus(event.next))
+      if event.warn
+        text = "<b><font color='red'>#{text}</font></b>"
+      tip += text
+    return tip
 
-    wasWarning = @hasWarning
-    @hasWarning = false
+  # Returns event data based on the current date and time.
+  # The event data is an array of objects with these properties:
+  #   title: Title of this event.
+  #   next:  Next occuring datetime of this event.
+  #   warn:  True if this is within the warning threshold.
+  getEvents: ->
+    events = []
+    currentDate = new Date
     for title, times of @data
       # ignore missing titles and those starting with -
-      if !title.length or title[0] == '-'
-        continue
+      continue if !title.length or title[0] == '-'
 
       # find next closest recurring event time
       next = @nextClosestTime(currentDate, times)
-      if !next
-        continue
+      continue if !next
 
-      # apply display format
-      text = @displayFormat.slice(0)
-        .replace(/\$title/g, title)
-        .replace(/\$time/g, @formatTime(next))
-        .replace(/\$tminus/g, @formatTminus(next))
+      events.push
+        title: title
+        next: next
+        warn: next - currentDate <= @warnThresholdMiliseconds
+    return events
 
-      # create event view element
-      eventClasses = ['inline-block']
-      if next - currentDate <= @warnThresholdMiliseconds
-        eventClasses.push('warn')
-        @hasWarning = true
-      event = @createElement('span', eventClasses...)
-      event.textContent = text
+  # Refresh view with current event information.
+  update: ->
+    # warning state
+    wasWarning = @hasWarning
+    @hasWarning = false
 
-      events.push(event)
-
-    # remove existing view elements first
+    # remove existing widgets first
     while @view.firstChild
       @view.removeChild(@view.firstChild)
 
-    for event in events
-      @view.appendChild(event)
+    # generate widgets from events
+    currentDate = new Date
+    for event in @getEvents()
+      # apply display format
+      text = @displayFormat.slice(0)
+        .replace(/\$title/g, event.title)
+        .replace(/\$time/g, @formatTime(event.next))
+        .replace(/\$tminus/g, @formatTminus(event.next))
+
+      # create and display widget element
+      eventClasses = ['inline-block']
+      if event.warn
+        eventClasses.push('warn')
+        @hasWarning = true
+      widget = @createElement('span', eventClasses...)
+      widget.textContent = text
+      @view.appendChild(widget)
 
     if !wasWarning && @hasWarning
       @setup(60000) # 1 minute refresh during warnings

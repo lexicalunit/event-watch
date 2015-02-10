@@ -169,17 +169,29 @@ class EventWatchView extends HTMLElement
       atom.config.set(key, value)
     return value
 
+  # Return true iff given eventTime is within warning threshold from given fromTime.
+  warnForTime: (eventTime, fromTime) ->
+    return eventTime - fromTime <= @warnThresholdMiliseconds
+
+  # Generate an item for the tooltip.
+  tooltipItem: (event) ->
+    text = '$title: $time [$tminus]<br />'
+      .replace(/\$title/g, event.title)
+      .replace(/\$time/g, @formatTime(event.next))
+      .replace(/\$tminus/g, @formatTminus(event.next))
+    if event.warn
+      text = "<b><font color='red'>#{text}</font></b>"
+    return text
+
   # Generate the content of the tooltip.
   tooltipTile: ->
+    currentTime = new Date
     tip = ''
-    for event in @getEvents()
-      text = '$title: $time [$tminus]<br />'
-        .replace(/\$title/g, event.title)
-        .replace(/\$time/g, @formatTime(event.next))
-        .replace(/\$tminus/g, @formatTminus(event.next))
-      if event.warn
-        text = "<b><font color='red'>#{text}</font></b>"
-      tip += text
+    for event in @getEvents(currentTime)
+      tip += @tooltipItem(event)
+      event.next = @nextClosestTime(event.next, event.times)
+      event.warn = @warnForTime(event.next, currentTime)
+      tip += @tooltipItem(event)
     return tip
 
   # Returns event data based on the current date and time.
@@ -187,21 +199,23 @@ class EventWatchView extends HTMLElement
   #   title: Title of this event.
   #   next:  Next occuring datetime of this event.
   #   warn:  True if this is within the warning threshold.
-  getEvents: ->
+  getEvents: (fromTime) ->
     events = []
-    currentDate = new Date
+    if !fromTime
+        fromTime = new Date
     for title, times of @data
       # ignore missing titles and those starting with -
       continue if !title.length or title[0] == '-'
 
       # find next closest recurring event time
-      next = @nextClosestTime(currentDate, times)
+      next = @nextClosestTime(fromTime, times)
       continue if !next
 
       events.push
         title: title
+        times: times
         next: next
-        warn: next - currentDate <= @warnThresholdMiliseconds
+        warn: @warnForTime(next, fromTime)
     return events
 
   # Refresh view with current event information.

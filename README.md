@@ -8,19 +8,29 @@ For example, I use this to keep track of when my Southbound and Northbound train
 
 ## Installation
 
-### Command Line
+### Via Command Line
 
-```bash
+```shell
 apm install event-watch
 ```
 
-### Atom
+### Via Atom
 
 ```
 Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 ```
 
 ## Configuration
+
+Configuration is handled by your Atom configuration file. You can open it using
+
+```
+Command Palette ➔ Application: Open Your Config
+```
+
+Within this config you should see various settings, for example you might see `core`, `editor`, `minimap` (if you have it installed), as well as other package configurations. You will need to add settings for `event-watch`. Below is a specification of the supported configuration keys and values, and for those that learn best by example, a copy of my configuration.
+
+### Specification
 
 | Configuration key | Description | Default |
 | -----------------:|:----------- |:------- |
@@ -30,54 +40,57 @@ Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 | `data` | A dictionary with event titles as keys and lists of config time formats as values. This defines when recurring events happen, and on what days they occur. | &nbsp; |
 | config time format | `'[0123456] HH:MM [am/pm]'` - The `0123456` part indicates what days of the week this event occurs on. Leave that off to indicate events that occur everyday. | &nbsp; |
 
-My configuration, for example:
+### Example Config
+
+The following is what my configuration looks like. Everything that's not related to Event Watch has been omitted.
 
 ```cson
-'event-watch':
-  'refreshIntervalMinutes': 5
-  'warnThresholdMinutes': 15
-  'displayFormat': '$title: $time'
-  'data':
-    'Northbound': [
-      '12345 7:03'
-      '12345 7:34'
-      '12345 8:05'
-      '12345 8:41'
-      '12345 9:15'
-      '12345 9:44'
-      '12345 10:15'
-      '12345 11:15'
-      '12345 12:15'
-      '12345 1:15pm'
-      '12345 2:15pm'
-      '12345 3:15pm'
-      '12345 3:44pm'
-      '12345 4:19pm'
-      '12345 4:55pm'
-      '12345 5:27pm'
-      '12345 5:57pm'
-      '12345 6:30pm'
-    ]
-    'Southbound': [
-      '12345 6:24'
-      '12345 6:56'
-      '12345 7:27'
-      '12345 7:58'
-      '12345 8:34'
-      '12345 9:09'
-      '12345 9:38'
-      '12345 10:38'
-      '12345 11:38'
-      '12345 12:38'
-      '12345 1:38pm'
-      '12345 2:38pm'
-      '12345 3:09pm'
-      '12345 3:38pm'
-      '12345 4:13pm'
-      '12345 4:43pm'
-      '12345 5:19pm'
-      '12345 5:51pm'
-    ]
+*:
+  'event-watch':
+    'refreshIntervalMinutes': 5
+    'warnThresholdMinutes': 15
+    'displayFormat': '$title: $time'
+    'data':
+      'Northbound': [
+        '12345 7:03'
+        '12345 7:34'
+        '12345 8:05'
+        '12345 8:41'
+        '12345 9:15'
+        '12345 9:44'
+        '12345 10:15'
+        '12345 11:15'
+        '12345 12:15'
+        '12345 1:15pm'
+        '12345 2:15pm'
+        '12345 3:15pm'
+        '12345 3:44pm'
+        '12345 4:19pm'
+        '12345 4:55pm'
+        '12345 5:27pm'
+        '12345 5:57pm'
+        '12345 6:30pm'
+      ]
+      'Southbound': [
+        '12345 6:24'
+        '12345 6:56'
+        '12345 7:27'
+        '12345 7:58'
+        '12345 8:34'
+        '12345 9:09'
+        '12345 9:38'
+        '12345 10:38'
+        '12345 11:38'
+        '12345 12:38'
+        '12345 1:38pm'
+        '12345 2:38pm'
+        '12345 3:09pm'
+        '12345 3:38pm'
+        '12345 4:13pm'
+        '12345 4:43pm'
+        '12345 5:19pm'
+        '12345 5:51pm'
+      ]
 ```
 
 So if my current time is `9:25 AM`:

@@ -1,7 +1,5 @@
-EventWatch = require '../lib/event-watch'
-
 describe 'EventWatch', ->
-  [view, workspaceElement] = []
+  [view] = []
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
@@ -18,24 +16,23 @@ describe 'EventWatch', ->
     waitsForPromise -> atom.packages.activatePackage('event-watch')
 
     runs ->
-      atom.packages.emitter.emit('did-activate-all')
-      view = EventWatch.view
+      view = document.querySelector('event-watch')
+      expect(view).toExist()
 
-  describe '.initialize', ->
-    it 'displays in the status bar', ->
+  describe 'after initialization', ->
+    it 'view is in the status bar', ->
       expect(view).toBeDefined()
       expect(view.querySelector('.event-watch')).toBeTruthy()
 
-    it 'has view text', ->
-      # TODO: Better test for content (be able to simulate current time?)
+    it 'view has expected data', ->
       expect(view.textContent).toContain 'One'
       expect(view.textContent).toContain 'Two'
 
-  describe '.deactivate', ->
+  describe 'deactivate', ->
     it 'removes the view', ->
       expect(view).toExist()
       atom.packages.deactivatePackage('event-watch')
-      expect(EventWatch.view).toBeNull()
+      expect(view.parentElement).toBeNull()
 
     it 'can be executed twice', ->
       atom.packages.deactivatePackage('event-watch')

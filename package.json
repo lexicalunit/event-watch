@@ -8,5 +8,12 @@
   "engines": {
     "atom": ">0.50.0"
   },
+  "consumedServices": {
+    "status-bar": {
+      "versions": {
+        "^1.0.0": "consumeStatusBar"
+      }
+    }
+  },
   "dependencies": {}
 }

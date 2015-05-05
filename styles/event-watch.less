@@ -1,20 +1,21 @@
-// The ui-variables file is provided by base themes provided by Atom.
-//
-// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
-// for a full listing of what's available.
-@import "ui-variables";
-
-// TODO: Make the colors configurable.
 .event-watch {
     padding: 0px;
     margin: 0px;
     display: inline;
+    text-decoration: none;
     white-space: nowrap;
-    color: #A07AFF !important;
-    text-decoration: none !important;
-
+    overflow: none;
+    color: #A07AFF;
+    &:link { color: #A07AFF; }
+    &:visited { color: #A07AFF; }
+    &:active { color: #B395FF; }
+    &:hover { color: #B395FF; }
     .warn {
-        color: red !important;
         font-weight: bold;
+        color: #FF0000;
+        &:link { color: #FF0000; }
+        &:visited { color: #FF0000; }
+        &:active { color: #FF4D4D; }
+        &:hover { color: #FF4D4D; }
     }
 }

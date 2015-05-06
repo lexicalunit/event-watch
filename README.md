@@ -47,7 +47,7 @@ Within this config you should see various settings, for example you might see `c
 
 #### Time and Display Formats
 
-Time formats such as `sameDayTimeFormat` and `otherDayTimeFormat` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `displayFormat` and `tooltipFormat` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
+Time formats such as `sameDayTimeFormat` and `otherDayTimeFormat` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `displayFormat` and `tooltipDisplayFormat` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
 
 - `$title`: The title of the event as defined by the key in `data`.
 - `$time`: The time of the next occurring event, formatted according to either `sameDayTimeFormat` or `otherDayTimeFormat` as appropriate.

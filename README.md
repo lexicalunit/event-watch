@@ -63,7 +63,7 @@ The `data` configuration should be a simple key/value object. Its keys are the t
 
 #### Writing a Schedule
 
-Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). Please see their extensive documentation for future details and examples.
+Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). Please see their extensive documentation for further details and examples.
 
 | Example Schedule | Description |
 | ---------------- | ----------- |

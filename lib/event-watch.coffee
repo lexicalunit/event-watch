@@ -6,7 +6,7 @@ module.exports =
     displayFormat:
       type: 'string'
       default: '$title: $tminus'
-    tooltipFormat:
+    tooltipDisplayFormat:
       type: 'string'
       default: '$title: $time [$tminus]'
     tooltipDetails:
@@ -23,6 +23,14 @@ module.exports =
       default: 15
       minimum: 1
       description: 'Events that will occur within this many minutes will be displayed in red.'
+    sameDayTimeFormat:
+      type: 'string'
+      default: 'H:mma'
+      description: 'Format of $time when it occurs sometime today.'
+    otherDayTimeFormat:
+      type: 'string'
+      default: 'ddd H:mma'
+      description: 'Format of $time when it does not occur later today.'
 
   activate: ->
 

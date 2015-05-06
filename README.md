@@ -37,21 +37,23 @@ Within this config you should see various settings, for example you might see `c
 | `refreshIntervalMinutes` | The time between updates in minutes.                        | `5`                         |
 | `warnThresholdMinutes`   | Events occurring within this many minutes are shown in red. | `15`                        |
 | `displayFormat`          | The display format for events.                              | `'$title: $tminus'`         |
-| `tooltipFormat`          | The tooltip display format for events.                      | `'$title: $time [$tminus]'` |
+| `tooltipDisplayFormat`   | The tooltip display format for events.                      | `'$title: $time [$tminus]'` |
 | `tooltipDetails`         | How many occurrences to show in the tooltip.                | `2`                         |
+| `sameDayTimeFormat`      | Format of `$time` when it occurs later today.               | `'H:mma'`                   |
+| `otherDayTimeFormat`     | Format of `$time` when it does NOT occur later today.       | `'ddd H:mma'`               |
 | `data`                   | Defines recurring events and their schedules. See below.    | `{}`                        |
 
 > Whenever any event is within `warnThresholdMinutes`, `refreshIntervalMinutes` changes to `1` minute automatically.
 
-#### Time Format
+#### Time and Display Formats
 
-Time formats for configuration like `displayFormat` and `tooltipFormat` are strings that specify how your event times should be formatted. The following values are permitted and will be interpolated automatically:
+Time formats such as `sameDayTimeFormat` and `otherDayTimeFormat` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `displayFormat` and `tooltipFormat` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
 
 - `$title`: The title of the event as defined by the key in `data`.
-- `$time`: The time of day of the next occurring event.
+- `$time`: The time of the next occurring event, formatted according to either `sameDayTimeFormat` or `otherDayTimeFormat` as appropriate.
 - `$tminus`: The time remaining until the next occurring event.
 
-#### `data`
+#### Configuring `data`
 
 The `data` configuration should be a simple key/value object. Its keys are the titles of your event, and its values are are schedules. For example:
 

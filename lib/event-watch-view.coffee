@@ -46,8 +46,10 @@ class EventWatchView extends HTMLDivElement
     warnThresholdMinutes = atom.config.get('event-watch.warnThresholdMinutes')
     @warnThresholdMiliseconds = warnThresholdMinutes * 60000
     @displayFormat = atom.config.get('event-watch.displayFormat')
-    @tooltipFormat = atom.config.get('event-watch.tooltipFormat')
+    @tooltipDisplayFormat = atom.config.get('event-watch.tooltipDisplayFormat')
     @tooltipDetails = atom.config.get('event-watch.tooltipDetails')
+    @sameDayTimeFormat = atom.config.get('event-watch.sameDayTimeFormat')
+    @otherDayTimeFormat = atom.config.get('event-watch.otherDayTimeFormat')
     if !interval
       interval = @refreshIntervalMiliseconds
     if @timer
@@ -65,41 +67,18 @@ class EventWatchView extends HTMLDivElement
     @classList.add('inline-block') # necessiary to make this view visible
     @appendChild(@link)
 
-  # Private: Returns time remaining string formatted as 'T-[D days] HH:MM'.
-  # D days is only included if date given is more than a day away.
+  # Private: Returns humanized time remaining string.
   formatTminus: (dt) ->
     now = new Date()
-    distance = dt - now
-    SECOND = 1000
-    MINUTE = SECOND * 60
-    HOUR = MINUTE * 60
-    DAY = HOUR * 24
-    days = distance // DAY
-    hours = (distance % DAY) // HOUR
-    minutes = (distance % HOUR) // MINUTE
-    if minutes < 10
-      minutes = "0#{minutes}"
-    rvalue = "#{hours}:#{minutes}"
-    if days > 0
-      rvalue = "#{days}days " + rvalue
-    rvalue = 'T-' + rvalue
-    return rvalue
+    return moment.duration(dt - now).humanize()
 
-  # Private: Returns time string formatted as '[Day] HH:MM[p]'.
-  # Day is only included if date given is not today, and p indicates pm.
+  # Private: Returns time formatted time string.
   formatTime: (dt, fromTime) ->
-    hour = dt.getHours()
-    minute = dt.getMinutes()
-    day = ''
-    pm = ''
-    if hour >= 12
-      pm = 'p'
-      hour = hour - 12
-    if minute < 10
-      minute = "0#{minute}"
+    @sameDayTimeFormat = atom.config.get('event-watch.sameDayTimeFormat')
+    @otherDayTimeFormat = atom.config.get('event-watch.otherDayTimeFormat')
     if dt.getDay() != fromTime.getDay()
-      day = moment(dt).format('ddd') + ' '
-    return "#{day}#{hour}:#{minute}#{pm}"
+      return moment(dt).format(@otherDayTimeFormat)
+    return moment(dt).format(@sameDayTimeFormat)
 
   # Private: Create DOM element of given type with given classes.
   createElement: (type, classes...) ->
@@ -119,7 +98,7 @@ class EventWatchView extends HTMLDivElement
       event = later.parse.text(times)
       nexts = later.schedule(event).next(@tooltipDetails)
       for next in nexts
-        text = (@tooltipFormat + '<br />')
+        text = (@tooltipDisplayFormat + '<br />')
           .replace(/\$title/g, title)
           .replace(/\$time/g, @formatTime(next, currentTime))
           .replace(/\$tminus/g, @formatTminus(next))

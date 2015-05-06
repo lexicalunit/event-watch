@@ -36,28 +36,38 @@ class EventWatchView extends HTMLDivElement
   handleEvents: ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:update': => @update()
+    atom.config.observe 'event-watch.displayFormat', => @updateConfig()
+    atom.config.observe 'event-watch.refreshIntervalMinutes', => @updateConfig()
+    atom.config.observe 'event-watch.warnThresholdMinutes', => @updateConfig()
+    atom.config.observe 'event-watch.tooltipDisplayFormat', => @updateConfig()
+    atom.config.observe 'event-watch.tooltipDetails', => @updateConfig()
+    atom.config.observe 'event-watch.sameDayTimeFormat', => @updateConfig()
+    atom.config.observe 'event-watch.otherDayTimeFormat', => @updateConfig()
+    atom.config.observe 'event-watch.data', => @updateConfig()
 
   # Private: Sets up timeout for next update.
-  # Use optional interval if given, otherwise use configuration setting.
+  # Use optional interval (in miliseconds) if given, otherwise use configuration setting.
   startTimer: (interval) ->
-    # TODO: add observers for these settings
-    refreshIntervalMinutes = atom.config.get('event-watch.refreshIntervalMinutes')
-    @refreshIntervalMiliseconds = refreshIntervalMinutes * 60000
-    warnThresholdMinutes = atom.config.get('event-watch.warnThresholdMinutes')
-    @warnThresholdMiliseconds = warnThresholdMinutes * 60000
-    @displayFormat = atom.config.get('event-watch.displayFormat')
-    @tooltipDisplayFormat = atom.config.get('event-watch.tooltipDisplayFormat')
-    @tooltipDetails = atom.config.get('event-watch.tooltipDetails')
-    @sameDayTimeFormat = atom.config.get('event-watch.sameDayTimeFormat')
-    @otherDayTimeFormat = atom.config.get('event-watch.otherDayTimeFormat')
     if !interval
-      interval = @refreshIntervalMiliseconds
+      interval = @refreshIntervalMinutes * 60000
     if @timer
       clearInterval(@timer)
     @timer = setInterval((=> @update()), interval)
 
-  # Private: Do initial setup for the link element.
+  # Private: Grabs current configuration from atom config.
+  updateConfig: ->
+    @displayFormat = atom.config.get('event-watch.displayFormat')
+    @refreshIntervalMinutes = atom.config.get('event-watch.refreshIntervalMinutes')
+    @warnThresholdMinutes = atom.config.get('event-watch.warnThresholdMinutes')
+    @tooltipDisplayFormat = atom.config.get('event-watch.tooltipDisplayFormat')
+    @tooltipDetails = atom.config.get('event-watch.tooltipDetails')
+    @sameDayTimeFormat = atom.config.get('event-watch.sameDayTimeFormat')
+    @otherDayTimeFormat = atom.config.get('event-watch.otherDayTimeFormat')
+    @data = atom.config.get('event-watch.data')
+
+  # Private: Do initial setup, create the link element, etc.
   setup: ->
+    @updateConfig()
     clickHandler = ->
       @update()
       return false
@@ -68,14 +78,11 @@ class EventWatchView extends HTMLDivElement
     @appendChild(@link)
 
   # Private: Returns humanized time remaining string.
-  formatTminus: (dt) ->
-    now = new Date()
-    return moment.duration(dt - now).humanize()
+  formatTminus: (dt, fromTime) ->
+    return moment.duration(dt - fromTime).humanize()
 
   # Private: Returns time formatted time string.
   formatTime: (dt, fromTime) ->
-    @sameDayTimeFormat = atom.config.get('event-watch.sameDayTimeFormat')
-    @otherDayTimeFormat = atom.config.get('event-watch.otherDayTimeFormat')
     if dt.getDay() != fromTime.getDay()
       return moment(dt).format(@otherDayTimeFormat)
     return moment(dt).format(@sameDayTimeFormat)
@@ -88,21 +95,24 @@ class EventWatchView extends HTMLDivElement
 
   # Private: Return true iff given eventTime is within warning threshold from given fromTime.
   warnForTime: (eventTime, fromTime) ->
-    return eventTime - fromTime <= @warnThresholdMiliseconds
+    return eventTime - fromTime <= @warnThresholdMinutes * 60000
 
   # Private: Generate the content of the tooltip.
   tooltipTile: ->
-    currentTime = new Date
+    now = new Date
     tip = ''
     for title, times of @data
       event = later.parse.text(times)
+      if event.error != -1
+        console.log('error in schedule ' + title + ' at character ' + event.error)
+        continue
       nexts = later.schedule(event).next(@tooltipDetails)
       for next in nexts
         text = (@tooltipDisplayFormat + '<br />')
           .replace(/\$title/g, title)
-          .replace(/\$time/g, @formatTime(next, currentTime))
-          .replace(/\$tminus/g, @formatTminus(next))
-        if @warnForTime(next, currentTime)
+          .replace(/\$time/g, @formatTime(next, now))
+          .replace(/\$tminus/g, @formatTminus(next, now))
+        if @warnForTime(next, now)
           text = "<b><font color='red'>#{text}</font></b>"
         tip += text
     return tip
@@ -118,15 +128,16 @@ class EventWatchView extends HTMLDivElement
       @link.removeChild(@link.firstChild)
 
     # then generate new widgets
-    # TODO: Get this once, then set up an observer
-    @data = atom.config.get('event-watch.data')
     for title, times of @data
       event = later.parse.text(times)
+      if event.error != -1
+        console.log('error in schedule ' + title + ' at character ' + event.error)
+        continue
       next = later.schedule(event).next(1)
       text = @displayFormat.slice(0)
         .replace(/\$title/g, title)
         .replace(/\$time/g, @formatTime(next, now))
-        .replace(/\$tminus/g, @formatTminus(next))
+        .replace(/\$tminus/g, @formatTminus(next, now))
 
       # create and display widget element
       eventClasses = ['inline-block']

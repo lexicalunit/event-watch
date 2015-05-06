@@ -22,7 +22,7 @@ Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 
 ## Configuration
 
-Configuration is handled by your Atom configuration file. You can open it using
+Most configuration options can be set by opening this package's settings once it is installed. Additional configuration is handled by your Atom configuration file. You can open it using
 
 ```
 Command Palette ➔ Application: Open Your Config
@@ -32,13 +32,44 @@ Within this config you should see various settings, for example you might see `c
 
 ### Specification
 
-| Configuration key | Description | Default |
-| -----------------:|:----------- |:------- |
-| `refreshIntervalMinutes` | The time between updates in minutes. | `5` |
-| `warnThresholdMinutes` | Events that will occur within this many minutes will be displayed in red. When any event is within this threshold, `refreshIntervalMinutes` changes to `1` automatically. | `3 * refreshIntervalMinutes` |
-| `displayFormat` | The display format for events. <ul><li>`$title`: The title of the event as defined by the key in `data`.</li><li>`$time`: The time of day of the next occurring event.</li><li>`$tminus`: The time remaining until the next occurring event.</li></ul> | `'$title: $time'` |
-| `data` | A dictionary with event titles as keys and lists of config time formats as values. This defines when recurring events happen, and on what days they occur. | &nbsp; |
-| config time format | `'[0123456] HH:MM [am/pm]'` - The `0123456` part indicates what days of the week this event occurs on. Leave that off to indicate events that occur everyday. | &nbsp; |
+| Configuration key        | Description                                                 | Default                     |
+| ------------------------:|:----------------------------------------------------------- |:--------------------------- |
+| `refreshIntervalMinutes` | The time between updates in minutes.                        | `5`                         |
+| `warnThresholdMinutes`   | Events occurring within this many minutes are shown in red. | `15`                        |
+| `displayFormat`          | The display format for events.                              | `'$title: $tminus'`         |
+| `tooltipFormat`          | The tooltip display format for events.                      | `'$title: $time [$tminus]'` |
+| `tooltipDetails`         | How many occurrences to show in the tooltip.                | `2`                         |
+| `data`                   | Defines recurring events and their schedules. See below.    | `{}`                        |
+
+> Whenever any event is within `warnThresholdMinutes`, `refreshIntervalMinutes` changes to `1` minute automatically.
+
+#### Time Format
+
+Time formats for configuration like `displayFormat` and `tooltipFormat` are strings that specify how your event times should be formatted. The following values are permitted and will be interpolated automatically:
+
+- `$title`: The title of the event as defined by the key in `data`.
+- `$time`: The time of day of the next occurring event.
+- `$tminus`: The time remaining until the next occurring event.
+
+#### `data`
+
+The `data` configuration should be a simple key/value object. Its keys are the titles of your event, and its values are are schedules. For example:
+
+```cson
+'data':
+  'Standup Meeting': 'at 9:00 am on Mon,Tue,Wed,Thu,Fri'
+  'Happy Hour': 'at 5:00 pm on Fri'
+```
+
+#### Writing a Schedule
+
+Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). Please see their extensive documentation for future details and examples.
+
+| Example Schedule | Description |
+| ---------------- | ----------- |
+| `"at 10:15 am"`  | fires at 10:15am every day |
+| `"every 5 mins"` | fires every 5 minutes every day |
+| `"at 7:03 am on Mon,Fri"` | fires at 7:03 am every Monday and Friday |
 
 ### Example Config
 
@@ -47,50 +78,9 @@ The following is what my configuration looks like. Everything that's not related
 ```cson
 *:
   'event-watch':
-    'refreshIntervalMinutes': 5
-    'warnThresholdMinutes': 15
-    'displayFormat': '$title: $time'
     'data':
-      'Northbound': [
-        '12345 7:03'
-        '12345 7:34'
-        '12345 8:05'
-        '12345 8:41'
-        '12345 9:15'
-        '12345 9:44'
-        '12345 10:15'
-        '12345 11:15'
-        '12345 12:15'
-        '12345 1:15pm'
-        '12345 2:15pm'
-        '12345 3:15pm'
-        '12345 3:44pm'
-        '12345 4:19pm'
-        '12345 4:55pm'
-        '12345 5:27pm'
-        '12345 5:57pm'
-        '12345 6:30pm'
-      ]
-      'Southbound': [
-        '12345 6:24'
-        '12345 6:56'
-        '12345 7:27'
-        '12345 7:58'
-        '12345 8:34'
-        '12345 9:09'
-        '12345 9:38'
-        '12345 10:38'
-        '12345 11:38'
-        '12345 12:38'
-        '12345 1:38pm'
-        '12345 2:38pm'
-        '12345 3:09pm'
-        '12345 3:38pm'
-        '12345 4:13pm'
-        '12345 4:43pm'
-        '12345 5:19pm'
-        '12345 5:51pm'
-      ]
+      Northbound: "at 7:03am and 7:34am and 8:05am and 8:41am and 9:15am and 9:44am and 10:15am and 11:15am and 12:15am and  1:15pm and 2:15pm and 3:15pm and 3:44pm and 4:19pm and 4:55pm and 5:27pm and 5:57pm and 6:30pm on Mon,Tue,Wed,Thu,Fri also at 7:30pm and 8:30pm and 9:30pm and 10:30pm and 11:30pm on Fri also at 12:30am on Sat also at 4:41pm and 5:15pm and 5:15pm and 5:49pm and 6:23pm and 6:57pm and 7:31pm and 8:05pm and 8:39pm and 9:13pm and 9:47pm and 10:21pm and 10:55pm and 11:29pm on Sat also at 12:03am on Sun"
+      Southbound: "at 6:24am and 6:56am and 7:27am and 7:58am and 8:34am and 9:09am and  9:38am and 10:38am and 11:38am and 12:38am and 1:38pm and 2:38pm and 3:09pm and 3:38pm and 4:13pm and 4:43pm and 5:19pm and 5:51pm on Mon,Tue,Wed,Thu,Fri"
 ```
 
 So if my current time is `9:25 AM`:

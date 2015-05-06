@@ -4,7 +4,7 @@ Based on the current time, displays the time of the next recurring event.
 
 For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
-![morning-screenshot](https://cloud.githubusercontent.com/assets/1903876/5672524/a2be36da-9756-11e4-9fde-581aaa2f7c38.png)
+![9_15](https://cloud.githubusercontent.com/assets/1903876/7494968/8f9965f8-f3d0-11e4-84e4-e884f70065b5.png)
 
 ## Installation
 
@@ -85,10 +85,10 @@ The following is what my configuration looks like. Everything that's not related
       Southbound: "at 6:24am and 6:56am and 7:27am and 7:58am and 8:34am and 9:09am and  9:38am and 10:38am and 11:38am and 12:38am and 1:38pm and 2:38pm and 3:09pm and 3:38pm and 4:13pm and 4:43pm and 5:19pm and 5:51pm on Mon,Tue,Wed,Thu,Fri"
 ```
 
-So if my current time is `9:25 AM`:
+So if my current time is `9:09 AM`:
 
-![morning-screenshot](https://cloud.githubusercontent.com/assets/1903876/5672524/a2be36da-9756-11e4-9fde-581aaa2f7c38.png)
+![9_09](https://cloud.githubusercontent.com/assets/1903876/7494974/9435bee0-f3d0-11e4-8000-705086a56860.png)
 
-And if my current time is `6:15 PM`:
+And if I hover over the widget at `9:11 AM` I would see:
 
-![evening-screenshot](https://cloud.githubusercontent.com/assets/1903876/5673870/7bac361c-9767-11e4-884a-a047154410c8.png)
+![9_11 tool](https://cloud.githubusercontent.com/assets/1903876/7494970/91ba24e4-f3d0-11e4-9d25-aacc276a1eb7.png)

@@ -13,7 +13,7 @@ class EventWatchView extends HTMLDivElement
     @timer = null
     @hasWarning = false
     @tooltip = atom.tooltips.add(@link,
-      title: => @tooltipTile()
+      title: => @tooltipTitle()
       html: true
     )
 
@@ -31,6 +31,57 @@ class EventWatchView extends HTMLDivElement
     @tooltip?.dispose()
     @tile?.destroy()
     @tile = null
+
+  # Public: Returns humanized remaining time string.
+  formatTminus: (dt, fromTime) ->
+    return moment.duration(dt - fromTime).humanize()
+
+  # Public: Returns formatted time string.
+  formatTime: (dt, fromTime) ->
+    if dt.getDay() != fromTime.getDay()
+      return moment(dt).format(@otherDayTimeFormat)
+    return moment(dt).format(@sameDayTimeFormat)
+
+  # Public: Return true iff given eventTime is within warning threshold from given fromTime.
+  warnForTime: (eventTime, fromTime) ->
+    return eventTime - fromTime <= @warnThresholdMinutes * 60000
+
+  # Public: Returns count events with text formatted according to given display format.
+  # Return value is array of events objects like:
+  #   {
+  #     displayText: string; formatted event text.
+  #     isWarning: boolean; true iff event meets warning threshold.
+  #   }
+  getEvents: (count, format, fromTime) ->
+    events = []
+    for title, textSchedule of @data
+      schedule = later.parse.text(textSchedule)
+      if schedule.error != -1
+        console.log('error in schedule ' + title + ' at character ' + schedule.error)
+        continue
+      nexts = later.schedule(schedule).next(count)
+      nexts = [nexts] if count == 1
+      for next in nexts
+        text = format.slice(0)
+          .replace(/\$title/g, title)
+          .replace(/\$time/g, @formatTime(next, fromTime))
+          .replace(/\$tminus/g, @formatTminus(next, fromTime))
+        events.push
+          displayText: text
+          isWarning: @warnForTime(next, fromTime)
+    return events
+
+  # Private: Do initial setup, create the link element, etc.
+  setup: ->
+    @updateConfig()
+    clickHandler = ->
+      @update()
+      return false
+    @link.href = '#'
+    @addEventListener('click', clickHandler)
+    @clickSubscription = dispose: => @removeEventListener('click', clickHandler)
+    @classList.add('inline-block') # necessiary to make this view visible
+    @appendChild(@link)
 
   # Private: Sets up the event handlers.
   handleEvents: ->
@@ -65,56 +116,21 @@ class EventWatchView extends HTMLDivElement
     @otherDayTimeFormat = atom.config.get('event-watch.otherDayTimeFormat')
     @data = atom.config.get('event-watch.data')
 
-  # Private: Do initial setup, create the link element, etc.
-  setup: ->
-    @updateConfig()
-    clickHandler = ->
-      @update()
-      return false
-    @link.href = '#'
-    @addEventListener('click', clickHandler)
-    @clickSubscription = dispose: => @removeEventListener('click', clickHandler)
-    @classList.add('inline-block') # necessiary to make this view visible
-    @appendChild(@link)
-
-  # Private: Returns humanized time remaining string.
-  formatTminus: (dt, fromTime) ->
-    return moment.duration(dt - fromTime).humanize()
-
-  # Private: Returns time formatted time string.
-  formatTime: (dt, fromTime) ->
-    if dt.getDay() != fromTime.getDay()
-      return moment(dt).format(@otherDayTimeFormat)
-    return moment(dt).format(@sameDayTimeFormat)
-
   # Private: Create DOM element of given type with given classes.
   createElement: (type, classes...) ->
     element = document.createElement(type)
     element.classList.add(classes...)
     return element
 
-  # Private: Return true iff given eventTime is within warning threshold from given fromTime.
-  warnForTime: (eventTime, fromTime) ->
-    return eventTime - fromTime <= @warnThresholdMinutes * 60000
-
   # Private: Generate the content of the tooltip.
-  tooltipTile: ->
+  tooltipTitle: ->
     now = new Date
     tip = ''
-    for title, times of @data
-      event = later.parse.text(times)
-      if event.error != -1
-        console.log('error in schedule ' + title + ' at character ' + event.error)
-        continue
-      nexts = later.schedule(event).next(@tooltipDetails)
-      for next in nexts
-        text = (@tooltipDisplayFormat + '<br />')
-          .replace(/\$title/g, title)
-          .replace(/\$time/g, @formatTime(next, now))
-          .replace(/\$tminus/g, @formatTminus(next, now))
-        if @warnForTime(next, now)
-          text = "<b><font color='red'>#{text}</font></b>"
-        tip += text
+    for event in @getEvents(@tooltipDetails, @tooltipDisplayFormat + '<br />', now)
+      text = event.displayText
+      if event.isWarning
+        text = "<b><font color='red'>#{text}</font></b>"
+      tip += text
     return tip
 
   # Private: Refresh view with current event information.
@@ -127,29 +143,19 @@ class EventWatchView extends HTMLDivElement
     while @link.firstChild
       @link.removeChild(@link.firstChild)
 
-    # then generate new widgets
-    for title, times of @data
-      event = later.parse.text(times)
-      if event.error != -1
-        console.log('error in schedule ' + title + ' at character ' + event.error)
-        continue
-      next = later.schedule(event).next(1)
-      text = @displayFormat.slice(0)
-        .replace(/\$title/g, title)
-        .replace(/\$time/g, @formatTime(next, now))
-        .replace(/\$tminus/g, @formatTminus(next, now))
-
-      # create and display widget element
+    # then create and display new widgets
+    for event in @getEvents(1, @displayFormat, now)
       eventClasses = ['inline-block']
-      if @warnForTime(next, now)
+      if event.isWarning
         eventClasses.push('warn')
         @hasWarning = true
       widget = @createElement('span', eventClasses...)
-      widget.textContent = text
+      widget.textContent = event.displayText
       @link.appendChild(widget)
 
+    # 1 minute refresh during warnings
     if !wasWarning && @hasWarning
-      @startTimer(60000) # 1 minute refresh during warnings
+      @startTimer(60000)
     else if wasWarning && !@hasWarning
       @startTimer()
 

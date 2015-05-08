@@ -16,18 +16,13 @@ class EventWatchView extends HTMLDivElement
   # Public: Attach view element to status bar and do initial setup.
   attach: ->
     @updateConfig()
-    @reattach()
+    @buildWidget()
     @handleEvents()
 
   # Public: Destroys and removes this element.
   destroy: ->
-    @stopTimer()
-    @clickSubscription?.dispose()
-    @tooltip?.dispose()
-    while @firstChild
-      @removeChild(@firstChild)
-    @tile?.destroy()
-    @tile = null
+    @destroyWidget()
+    @subscriptions?.dispose()
 
   # Public: Returns humanized remaining time string.
   formatTminus: (dt, fromTime) ->
@@ -68,8 +63,18 @@ class EventWatchView extends HTMLDivElement
           isWarning: @warnForTime(next, fromTime)
     return events
 
-  # Private: Reattaches view element to status bar after toggling it back on.
-  reattach: ->
+  # Private: Destroies the widget elements.
+  destroyWidget: ->
+    @stopTimer()
+    @clickSubscription?.dispose()
+    @tooltip?.dispose()
+    while @firstChild
+      @removeChild(@firstChild)
+    @tile?.destroy()
+    @tile = null
+
+  # Private: Builds and attaches view element to status bar.
+  buildWidget: ->
     @tile = @statusBar?.addLeftTile(item: this, priority: 200)
     @setupLink()
     @startTimer()
@@ -148,9 +153,9 @@ class EventWatchView extends HTMLDivElement
   toggle: ->
     @visible = !@visible
     if @visible
-      @reattach()
+      @buildWidget()
     else
-      @destroy()
+      @destroyWidget()
 
   # Private: Removes all elements in main link widget.
   removeEvents: ->

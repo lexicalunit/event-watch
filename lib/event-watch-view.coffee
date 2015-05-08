@@ -9,26 +9,23 @@ class EventWatchView extends HTMLDivElement
   initialize: (@statusBar) ->
     later.date.localTime()
     @classList.add('inline-block')
-    @link = @createElement('a', 'event-watch', 'inline-block')
-    @timer = null
     @hasWarning = false
-    @tooltip = atom.tooltips.add(@link,
-      title: => @tooltipTitle()
-      html: true
-    )
+    @visible = true
+    @timer = null
 
   # Public: Attach view element to status bar and do initial setup.
   attach: ->
-    @tile = @statusBar?.addLeftTile(item: this, priority: 200)
-    @setup()
-    @startTimer()
-    @update()
+    @updateConfig()
+    @reattach()
     @handleEvents()
 
   # Public: Destroys and removes this element.
   destroy: ->
+    @stopTimer()
     @clickSubscription?.dispose()
     @tooltip?.dispose()
+    while @firstChild
+      @removeChild(@firstChild)
     @tile?.destroy()
     @tile = null
 
@@ -71,9 +68,16 @@ class EventWatchView extends HTMLDivElement
           isWarning: @warnForTime(next, fromTime)
     return events
 
-  # Private: Do initial setup, create the link element, etc.
-  setup: ->
-    @updateConfig()
+  # Private: Reattaches view element to status bar after toggling it back on.
+  reattach: ->
+    @tile = @statusBar?.addLeftTile(item: this, priority: 200)
+    @setupLink()
+    @startTimer()
+    @update()
+
+  # Private: Do inital setup for and create link element.
+  setupLink: ->
+    @link = @createElement('a', 'event-watch', 'inline-block')
     clickHandler = ->
       @update()
       return false
@@ -82,11 +86,16 @@ class EventWatchView extends HTMLDivElement
     @clickSubscription = dispose: => @removeEventListener('click', clickHandler)
     @classList.add('inline-block') # necessiary to make this view visible
     @appendChild(@link)
+    @tooltip = atom.tooltips.add(@link,
+      title: => @tooltipTitle()
+      html: true
+    )
 
   # Private: Sets up the event handlers.
   handleEvents: ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:update': => @update()
+    @subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:toggle': => @toggle()
     atom.config.observe 'event-watch.displayFormat', => @updateConfig()
     atom.config.observe 'event-watch.refreshIntervalMinutes', => @updateConfig()
     atom.config.observe 'event-watch.warnThresholdMinutes', => @updateConfig()
@@ -99,11 +108,14 @@ class EventWatchView extends HTMLDivElement
   # Private: Sets up timeout for next update.
   # Use optional interval (in miliseconds) if given, otherwise use configuration setting.
   startTimer: (interval) ->
-    if !interval
-      interval = @refreshIntervalMinutes * 60000
+    interval = @refreshIntervalMinutes * 60000 if !interval
     if @timer
       clearInterval(@timer)
     @timer = setInterval((=> @update()), interval)
+
+  # Private: Stops timeout for next update.
+  stopTimer: ->
+    clearInterval(@timer)
 
   # Private: Grabs current configuration from atom config.
   updateConfig: ->
@@ -128,34 +140,46 @@ class EventWatchView extends HTMLDivElement
     tip = ''
     for event in @getEvents(@tooltipDetails, @tooltipDisplayFormat + '<br />', now)
       text = event.displayText
-      if event.isWarning
-        text = "<b><font color='red'>#{text}</font></b>"
+      text = "<b><font color='red'>#{text}</font></b>" if event.isWarning
       tip += text
     return tip
 
-  # Private: Refresh view with current event information.
-  update: ->
-    now = new Date
-    wasWarning = @hasWarning
-    @hasWarning = false
+  # Private: Toggles on or off the event-watch widget.
+  toggle: ->
+    @visible = !@visible
+    if @visible
+      @reattach()
+    else
+      @destroy()
 
-    # remove existing widgets first
+  # Private: Removes all elements in main link widget.
+  removeEvents: ->
     while @link.firstChild
       @link.removeChild(@link.firstChild)
 
-    # then create and display new widgets
+  # Private: Displays events in stasus bar.
+  # Return true iff a displayed event is within warning threshold.
+  displayEvents: ->
+    now = new Date
+    hasWarning = false
     for event in @getEvents(1, @displayFormat, now)
       eventClasses = ['inline-block']
       if event.isWarning
         eventClasses.push('warn')
-        @hasWarning = true
+        hasWarning = true
       widget = @createElement('span', eventClasses...)
       widget.textContent = event.displayText
       @link.appendChild(widget)
+    return hasWarning
 
-    # 1 minute refresh during warnings
+  # Private: Refresh view with current event information.
+  update: ->
+    return if !@visible
+    wasWarning = @hasWarning
+    @removeEvents()
+    @hasWarning = @displayEvents()
     if !wasWarning && @hasWarning
-      @startTimer(60000)
+      @startTimer(60000) # 1 minute refresh during warnings
     else if wasWarning && !@hasWarning
       @startTimer()
 

@@ -5,6 +5,7 @@
         'label': 'Event Watch'
         'submenu': [
           { 'label': 'Update', 'command': 'event-watch:update' }
+          { 'label': 'Toggle', 'command': 'event-watch:toggle' }
         ]
       ]
     }

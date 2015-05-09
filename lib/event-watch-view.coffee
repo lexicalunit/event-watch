@@ -48,13 +48,13 @@ class EventWatchView extends HTMLDivElement
     events = []
     for title, textSchedule of @data
       if typeof textSchedule isnt 'string'
-        atom.notifications.addWarning('event-watch: Issue with schedule "' + title + '"',
-          {detail: 'Schedule is not a String.'})
+        atom.notifications.addWarning 'event-watch: Issue with schedule "' + title + '"',
+          detail: 'Schedule is not a String.'
         continue
       schedule = later.parse.text(textSchedule)
       if schedule.error != -1
-        atom.notifications.addWarning('event-watch: Issue with schedule "' + title + '"',
-          {detail: 'Parse failure at character ' + schedule.error + '.'})
+        atom.notifications.addWarning 'event-watch: Issue with schedule "' + title + '"',
+          detail: 'Parse failure at character ' + schedule.error + '.'
         continue
       nexts = later.schedule(schedule).next(count)
       nexts = [nexts] if count == 1
@@ -94,12 +94,10 @@ class EventWatchView extends HTMLDivElement
     @link.href = '#'
     @addEventListener('click', clickHandler)
     @clickSubscription = dispose: => @removeEventListener('click', clickHandler)
-    @classList.add('inline-block') # necessiary to make this view visible
     @appendChild(@link)
-    @tooltip = atom.tooltips.add(@link,
+    @tooltip = atom.tooltips.add @link,
       title: => @tooltipTitle()
       html: true
-    )
 
   # Private: Sets up the event handlers.
   handleEvents: ->

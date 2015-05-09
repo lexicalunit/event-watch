@@ -5,11 +5,9 @@ describe 'EventWatch', ->
     workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
-    atom.config.set 'event-watch.refreshIntervalMinutes', 5
-    atom.config.set 'event-watch.warnThresholdMinutes', 15
     atom.config.set 'event-watch.data', {
-        'One': ['1:00', '2:00'],
-        'Two': ['5:00', '14:00']
+      'One': 'at 1:00 and 2:00',
+      'Two': 'at 5:00 and 14:00'
     }
 
     waitsForPromise -> atom.packages.activatePackage('status-bar')

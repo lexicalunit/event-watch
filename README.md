@@ -65,7 +65,7 @@ The `data` configuration should be a simple key/value object. Its keys are the t
 
 #### Writing a Schedule
 
-Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). Please see their extensive documentation for further details and examples. If event-watch encounters a problem in parsing your schedule, see the console log for information concerning the parse error.
+Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). Please see their extensive documentation for further details and examples. If event-watch encounters a problem in parsing your schedule, it will warn you with a short notification.
 
 | Example Schedule | Description |
 | ---------------- | ----------- |

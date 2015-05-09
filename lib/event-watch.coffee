@@ -34,7 +34,7 @@ module.exports =
 
   activate: ->
 
-  consumeStatusBar: (@statusBar) ->
+  consumeStatusBar: (statusBar) ->
     EventWatchView = require './event-watch-view'
     @view = new EventWatchView()
     @view.initialize(statusBar)

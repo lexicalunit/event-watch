@@ -1,4 +1,4 @@
-{CompositeDisposable, ConfigObserver} = require 'atom'
+{CompositeDisposable} = require 'atom'
 later = require 'later'
 moment = require 'moment'
 
@@ -47,9 +47,14 @@ class EventWatchView extends HTMLDivElement
   getEvents: (count, format, fromTime) ->
     events = []
     for title, textSchedule of @data
+      if typeof textSchedule isnt 'string'
+        atom.notifications.addWarning('event-watch: Issue with schedule "' + title + '"',
+          {detail: 'Schedule is not a String.'})
+        continue
       schedule = later.parse.text(textSchedule)
       if schedule.error != -1
-        console.log('error in schedule ' + title + ' at character ' + schedule.error)
+        atom.notifications.addWarning('event-watch: Issue with schedule "' + title + '"',
+          {detail: 'Parse failure at character ' + schedule.error + '.'})
         continue
       nexts = later.schedule(schedule).next(count)
       nexts = [nexts] if count == 1

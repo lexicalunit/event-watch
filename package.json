@@ -6,7 +6,7 @@
   "repository": "https://github.com/lexicalunit/event-watch",
   "license": "Public domain",
   "engines": {
-    "atom": ">0.50.0"
+    "atom": ">=0.194.0 <2.0.0"
   },
   "coffeelintConfig": {
     "max_line_length": {

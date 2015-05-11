@@ -22,41 +22,23 @@ Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 
 ## Configuration
 
-Most configuration options can be set by opening this package's settings once it is installed. Additional configuration is handled by your Atom configuration file. You can open it using
+Most configuration options can be set by opening this package's settings once it is installed. Configuring your schedules' `data` is handled by editing your Atom configuration file. You can open it using
 
 ```
 Command Palette ➔ Application: Open Your Config
 ```
 
-Within this config you should see various settings, for example you might see `core`, `editor`, `minimap` (if you have it installed), as well as other package configurations. You will need to add settings for `event-watch`. Below is a specification of the supported configuration keys and values, and for those that learn best by example, a copy of my configuration.
+Within this config you should see various settings, for example you might see `core`, `editor`, `minimap` (if you have it installed), as well as other package configurations. You will need to add a `data` section for `event-watch` specifying your recurring event schedules.
 
-### Specification
+### Time and Display Formats
 
-| Configuration key        | Description                                                 | Default                     |
-| ------------------------:|:----------------------------------------------------------- |:--------------------------- |
-| `cronSchedules`          | If true, schedules are parsed as cron expressions.          | `false`                     |
-| `data`                   | Defines recurring events and their schedules. See below.    | `{}`                        |
-| `displayColor`           | A valid [CSS color expression](http://www.w3schools.com/cssref/css_colornames.asp) for font color. | `#A07AFF` |
-| `displayFormat`          | The display format for events.                              | `'$title: $tminus'`         |
-| `displayWarningColor`    | A valid [CSS color expression](http://www.w3schools.com/cssref/css_colornames.asp) for warning font color. | `#FF4444` |
-| `otherDayTimeFormat`     | Format of `$time` when it does NOT occur later today.       | `'ddd H:mma'`               |
-| `refreshIntervalMinutes` | The time between updates in minutes.                        | `5`                         |
-| `sameDayTimeFormat`      | Format of `$time` when it occurs later today.               | `'H:mma'`                   |
-| `tooltipDetails`         | How many occurrences to show in the tooltip.                | `2`                         |
-| `tooltipDisplayFormat`   | The tooltip display format for events.                      | `'$title: $time [$tminus]'` |
-| `warnThresholdMinutes`   | Events occurring within this many minutes are shown in warning color. | `15`              |
-
-> Whenever any event is within `warnThresholdMinutes`, `refreshIntervalMinutes` changes to `1` minute automatically.
-
-#### Time and Display Formats
-
-Time formats such as `sameDayTimeFormat` and `otherDayTimeFormat` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `displayFormat` and `tooltipDisplayFormat` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
+Time formats such as `timeFormatSameDay` and `timeFormatOtherDay` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `Display Format` and `Display Format Tooltip` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
 
 - `$title`: The title of the event as defined by the key in `data`.
-- `$time`: The time of the next occurring event, formatted according to either `sameDayTimeFormat` or `otherDayTimeFormat` as appropriate.
+- `$time`: The time of the next occurring event, formatted according to either `timeFormatSameDay` or `timeFormatOtherDay` as appropriate.
 - `$tminus`: The time remaining until the next occurring event.
 
-#### Configuring `data`
+### Configuring `data`
 
 The `data` configuration should be a simple key/value object. Its keys are the titles of your event, and its values are are schedules. For example:
 
@@ -66,9 +48,9 @@ The `data` configuration should be a simple key/value object. Its keys are the t
   'Happy Hour': 'at 5:00 pm on Fri'
 ```
 
-#### Writing a Schedule
+### Writing a Schedule
 
-Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). Please see their extensive documentation for further details and examples. If event-watch encounters a problem in parsing your schedule, it will warn you with a short notification.
+Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). If `cronSchedules` is enabled, event-watch will use [later.js's cron parser](http://bunkat.github.io/later/parsers.html#cron) instead. Please see their extensive documentation for further details and examples. If event-watch encounters a problem in parsing your schedule, it will warn you with a short notification.
 
 | Example Schedule | Description |
 | ---------------- | ----------- |

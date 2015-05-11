@@ -31,8 +31,8 @@ class EventWatchView extends HTMLDivElement
   # Public: Returns formatted time string.
   formatTime: (dt, fromTime) ->
     if dt.getDay() != fromTime.getDay()
-      return moment(dt).format(@otherDayTimeFormat)
-    return moment(dt).format(@sameDayTimeFormat)
+      return moment(dt).format(@timeFormatOtherDay)
+    return moment(dt).format(@timeFormatSameDay)
 
   # Public: Return true iff given eventTime is within warning threshold from given fromTime.
   isPastWarningTime: (eventTime, fromTime) ->
@@ -113,13 +113,13 @@ class EventWatchView extends HTMLDivElement
     atom.config.observe 'event-watch.cronSchedules', => @updateConfig()
     atom.config.observe 'event-watch.data', => @updateConfig()
     atom.config.observe 'event-watch.displayColor', => @updateConfig()
+    atom.config.observe 'event-watch.displayColorWarning', => @updateConfig()
     atom.config.observe 'event-watch.displayFormat', => @updateConfig()
-    atom.config.observe 'event-watch.displayWarningColor', => @updateConfig()
-    atom.config.observe 'event-watch.otherDayTimeFormat', => @updateConfig()
+    atom.config.observe 'event-watch.displayFormatTooltip', => @updateConfig()
     atom.config.observe 'event-watch.refreshIntervalMinutes', => @updateConfig()
-    atom.config.observe 'event-watch.sameDayTimeFormat', => @updateConfig()
+    atom.config.observe 'event-watch.timeFormatOtherDay', => @updateConfig()
+    atom.config.observe 'event-watch.timeFormatSameDay', => @updateConfig()
     atom.config.observe 'event-watch.tooltipDetails', => @updateConfig()
-    atom.config.observe 'event-watch.tooltipDisplayFormat', => @updateConfig()
     atom.config.observe 'event-watch.warnThresholdMinutes', => @updateConfig()
 
   # Private: Sets up timeout for next update.
@@ -139,13 +139,13 @@ class EventWatchView extends HTMLDivElement
     @data = atom.config.get('event-watch.cronSchedules')
     @data = atom.config.get('event-watch.data')
     @displayColor = atom.config.get('event-watch.displayColor')
+    @displayColorWarning = atom.config.get('event-watch.displayColorWarning')
     @displayFormat = atom.config.get('event-watch.displayFormat')
-    @displayWarningColor = atom.config.get('event-watch.displayWarningColor')
-    @otherDayTimeFormat = atom.config.get('event-watch.otherDayTimeFormat')
+    @displayFormatTooltip = atom.config.get('event-watch.displayFormatTooltip')
     @refreshIntervalMinutes = atom.config.get('event-watch.refreshIntervalMinutes')
-    @sameDayTimeFormat = atom.config.get('event-watch.sameDayTimeFormat')
+    @timeFormatOtherDay = atom.config.get('event-watch.timeFormatOtherDay')
+    @timeFormatSameDay = atom.config.get('event-watch.timeFormatSameDay')
     @tooltipDetails = atom.config.get('event-watch.tooltipDetails')
-    @tooltipDisplayFormat = atom.config.get('event-watch.tooltipDisplayFormat')
     @warnThresholdMinutes = atom.config.get('event-watch.warnThresholdMinutes')
 
   # Private: Create DOM element of given type with given classes.
@@ -158,9 +158,9 @@ class EventWatchView extends HTMLDivElement
   tooltipTitle: ->
     now = new Date
     tip = ''
-    for event in @getEvents(@tooltipDetails, @tooltipDisplayFormat + '<br />', now)
+    for event in @getEvents(@tooltipDetails, @displayFormatTooltip + '<br />', now)
       text = event.displayText
-      color = if event.isWarning then @displayWarningColor else @displayColor
+      color = if event.isWarning then @displayColorWarning else @displayColor
       text = "<font color='#{color}'>#{text}</font>"
       tip += text
     return tip
@@ -187,7 +187,7 @@ class EventWatchView extends HTMLDivElement
       widget = @createElement('span', 'inline-block')
       if event.isWarning
         widget.classList.add('warn')
-        widget.style.color = @displayWarningColor
+        widget.style.color = @displayColorWarning
         hasWarning = true
       else
         widget.style.color = @displayColor

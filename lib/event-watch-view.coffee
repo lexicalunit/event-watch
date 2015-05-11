@@ -35,7 +35,7 @@ class EventWatchView extends HTMLDivElement
     return moment(dt).format(@sameDayTimeFormat)
 
   # Public: Return true iff given eventTime is within warning threshold from given fromTime.
-  warnForTime: (eventTime, fromTime) ->
+  isPastWarningTime: (eventTime, fromTime) ->
     return eventTime - fromTime <= @warnThresholdMinutes * 60000
 
   # Public: Returns count events with text formatted according to given display format.
@@ -48,13 +48,11 @@ class EventWatchView extends HTMLDivElement
     events = []
     for title, textSchedule of @data
       if typeof textSchedule isnt 'string'
-        atom.notifications.addWarning 'event-watch: Issue with schedule "' + title + '"',
-          detail: 'Schedule is not a String.'
+        @warnAboutSchedule(title, 'Schedule is not a String.')
         continue
       schedule = later.parse.text(textSchedule)
       if schedule.error != -1
-        atom.notifications.addWarning 'event-watch: Issue with schedule "' + title + '"',
-          detail: 'Parse failure at character ' + schedule.error + '.'
+        @warnAboutSchedule(title, 'Parse failure at character ' + schedule.error + '.')
         continue
       nexts = later.schedule(schedule).next(count)
       nexts = [nexts] if count == 1
@@ -65,8 +63,13 @@ class EventWatchView extends HTMLDivElement
           .replace(/\$tminus/g, @formatTminus(next, fromTime))
         events.push
           displayText: text
-          isWarning: @warnForTime(next, fromTime)
+          isWarning: @isPastWarningTime(next, fromTime)
     return events
+
+  # Private: Warn the user about an issue with the schedule with the given title.
+  warnAboutSchedule: (title, detail) ->
+    atom.notifications.addWarning 'event-watch: Issue with schedule "' + title + '"',
+      detail: detail
 
   # Private: Destroies the widget elements.
   destroyWidget: ->

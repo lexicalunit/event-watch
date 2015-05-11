@@ -34,14 +34,17 @@ Within this config you should see various settings, for example you might see `c
 
 | Configuration key        | Description                                                 | Default                     |
 | ------------------------:|:----------------------------------------------------------- |:--------------------------- |
-| `refreshIntervalMinutes` | The time between updates in minutes.                        | `5`                         |
-| `warnThresholdMinutes`   | Events occurring within this many minutes are shown in red. | `15`                        |
-| `displayFormat`          | The display format for events.                              | `'$title: $tminus'`         |
-| `tooltipDisplayFormat`   | The tooltip display format for events.                      | `'$title: $time [$tminus]'` |
-| `tooltipDetails`         | How many occurrences to show in the tooltip.                | `2`                         |
-| `sameDayTimeFormat`      | Format of `$time` when it occurs later today.               | `'H:mma'`                   |
-| `otherDayTimeFormat`     | Format of `$time` when it does NOT occur later today.       | `'ddd H:mma'`               |
+| `cronSchedules`          | If true, schedules are parsed as cron expressions.          | `false`                     |
 | `data`                   | Defines recurring events and their schedules. See below.    | `{}`                        |
+| `displayColor`           | A valid [CSS color expression](http://www.w3schools.com/cssref/css_colornames.asp) for font color. | `#A07AFF` |
+| `displayFormat`          | The display format for events.                              | `'$title: $tminus'`         |
+| `displayWarningColor`    | A valid [CSS color expression](http://www.w3schools.com/cssref/css_colornames.asp) for warning font color. | `#FF4444` |
+| `otherDayTimeFormat`     | Format of `$time` when it does NOT occur later today.       | `'ddd H:mma'`               |
+| `refreshIntervalMinutes` | The time between updates in minutes.                        | `5`                         |
+| `sameDayTimeFormat`      | Format of `$time` when it occurs later today.               | `'H:mma'`                   |
+| `tooltipDetails`         | How many occurrences to show in the tooltip.                | `2`                         |
+| `tooltipDisplayFormat`   | The tooltip display format for events.                      | `'$title: $time [$tminus]'` |
+| `warnThresholdMinutes`   | Events occurring within this many minutes are shown in warning color. | `15`              |
 
 > Whenever any event is within `warnThresholdMinutes`, `refreshIntervalMinutes` changes to `1` minute automatically.
 
@@ -97,8 +100,6 @@ And if I hover over the widget at `9:11 AM` I would see:
 
 I would like to add the following features in future versions of event-watch.
 
-- Automatically handle cron syntax for schedules.
-- Provide customization options for font colors.
-- Support `data` being provided by configuration file, either local or remote.
+- Support `data` being provided by configuration file; either local or remote.
 - Better error handling for `data` that repeatedly causes the same failures on every update.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).

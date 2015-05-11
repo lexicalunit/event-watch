@@ -31,6 +31,16 @@ module.exports =
       type: 'string'
       default: 'ddd h:mma'
       description: 'Format of $time when it does not occur later today.'
+    cronSchedules:
+      type: 'boolean'
+      default: false
+      description: 'If true, schedules are parsed as cron expressions.'
+    displayColor:
+      type: 'string'
+      default: '#A07AFF'
+    displayWarningColor:
+      type: 'string'
+      default: '#FF4444'
 
   activate: ->
 

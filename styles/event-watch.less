@@ -4,16 +4,16 @@
     display: inline;
     text-decoration: none;
     white-space: nowrap;
-    color: #A07AFF;
-    &:link { color: #A07AFF; }
-    &:visited { color: #A07AFF; }
-    &:active { color: #A07AFF; }
-    &:hover { color: #A07AFF; }
-    .warn {
-        color: #FF0000;
-        &:link { color: #FF0000; }
-        &:visited { color: #FF0000; }
-        &:active { color: #FF0000; }
-        &:hover { color: #FF0000; }
-    }
+
+    .warn { }
 }
+
+.event-watch:link { .event-watch; }
+.event-watch:visited { .event-watch; }
+.event-watch:active { .event-watch; }
+.event-watch:hover { .event-watch; }
+
+.event-watch.warn:link { .event-watch.warn; }
+.event-watch.warn:visited { .event-watch.warn; }
+.event-watch.warn:active { .event-watch.warn; }
+.event-watch.warn:hover { .event-watch.warn; }

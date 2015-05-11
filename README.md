@@ -92,3 +92,13 @@ So if my current time is `9:09 AM`:
 And if I hover over the widget at `9:11 AM` I would see:
 
 ![9_11 tool](https://cloud.githubusercontent.com/assets/1903876/7494970/91ba24e4-f3d0-11e4-9d25-aacc276a1eb7.png)
+
+## Future Work
+
+I would like to add the following features in future versions of event-watch.
+
+- Automatically handle cron syntax for schedules.
+- Provide customization options for font colors.
+- Support `data` being provided by configuration file, either local or remote.
+- Better error handling for `data` that repeatedly causes the same failures on every update.
+- Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).

@@ -7,14 +7,18 @@ module.exports =
     data:
       type: 'object'
       properties: {}
-    displayColor:
+    displayColorStatusbar:
       type: 'string'
       default: '#A07AFF'
-      description: 'A valid CSS color expression for font color.'
+      description: 'A valid CSS color expression for the normal font color in the statusbar.'
+    displayColorTooltip:
+      type: 'string'
+      default: '#FFFFFF'
+      description: 'A valid CSS color expression for the normal font color in the tooltip.'
     displayColorWarning:
       type: 'string'
       default: '#FF4444'
-      description: 'A valid CSS color expression for warning font color.'
+      description: 'A valid CSS color expression for the font color when the warning threshold has been met.'
     displayFormat:
       type: 'string'
       default: '$title: $tminus'

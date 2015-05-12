@@ -112,7 +112,8 @@ class EventWatchView extends HTMLDivElement
     @subscriptions.add atom.commands.add 'atom-workspace', 'event-watch:update': => @update()
     atom.config.observe 'event-watch.cronSchedules', => @updateConfig()
     atom.config.observe 'event-watch.data', => @updateConfig()
-    atom.config.observe 'event-watch.displayColor', => @updateConfig()
+    atom.config.observe 'event-watch.displayColorStatusbar', => @updateConfig()
+    atom.config.observe 'event-watch.displayColorTooltip', => @updateConfig()
     atom.config.observe 'event-watch.displayColorWarning', => @updateConfig()
     atom.config.observe 'event-watch.displayFormat', => @updateConfig()
     atom.config.observe 'event-watch.displayFormatTooltip', => @updateConfig()
@@ -138,7 +139,8 @@ class EventWatchView extends HTMLDivElement
   updateConfig: ->
     @data = atom.config.get('event-watch.cronSchedules')
     @data = atom.config.get('event-watch.data')
-    @displayColor = atom.config.get('event-watch.displayColor')
+    @displayColorStatusbar = atom.config.get('event-watch.displayColorStatusbar')
+    @displayColorTooltip = atom.config.get('event-watch.displayColorTooltip')
     @displayColorWarning = atom.config.get('event-watch.displayColorWarning')
     @displayFormat = atom.config.get('event-watch.displayFormat')
     @displayFormatTooltip = atom.config.get('event-watch.displayFormatTooltip')
@@ -160,7 +162,7 @@ class EventWatchView extends HTMLDivElement
     tip = ''
     for event in @getEvents(@tooltipDetails, @displayFormatTooltip + '<br />', now)
       text = event.displayText
-      color = if event.isWarning then @displayColorWarning else @displayColor
+      color = if event.isWarning then @displayColorWarning else @displayColorTooltip
       text = "<font color='#{color}'>#{text}</font>"
       tip += text
     return tip
@@ -190,7 +192,7 @@ class EventWatchView extends HTMLDivElement
         widget.style.color = @displayColorWarning
         hasWarning = true
       else
-        widget.style.color = @displayColor
+        widget.style.color = @displayColorStatusbar
       widget.textContent = event.displayText
       @link.appendChild(widget)
     return hasWarning

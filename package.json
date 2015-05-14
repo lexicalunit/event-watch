@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "later": "^1.1.6",
-    "moment": "^2.10.2"
+    "moment": "^2.10.2",
+    "season": "^5.2.0"
   }
 }

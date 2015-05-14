@@ -4,9 +4,14 @@ module.exports =
       type: 'boolean'
       default: false
       description: 'If true, schedules are parsed as cron expressions.'
-    data:
+    schedules:
       type: 'object'
       properties: {}
+    subscriptions:
+      default: []
+      type: 'array'
+      items:
+        type: 'string'
     displayColorStatusbar:
       type: 'string'
       default: '#A07AFF'
@@ -55,8 +60,8 @@ module.exports =
 
   consumeStatusBar: (statusBar) ->
     EventWatchView = require './event-watch-view'
-    @view = new EventWatchView()
-    @view.initialize(statusBar)
+    @view = new EventWatchView
+    @view.initialize @config, statusBar
     @view.attach()
 
   deactivate: ->

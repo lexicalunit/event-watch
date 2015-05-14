@@ -30,14 +30,6 @@ Command Palette ➔ Application: Open Your Config
 
 Within this config you should see various settings, for example you might see `core`, `editor`, `minimap` (if you have it installed), as well as other package configurations. You will need to provide schedule data for `event-watch` specifying your recurring event schedules.
 
-### Time and Display Formats
-
-Time formats such as `timeFormatSameDay` and `timeFormatOtherDay` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `Display Format` and `Display Format Tooltip` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
-
-- `$title`: The title of the event as defined by its key in `schedules` or `subscriptions`.
-- `$time`: The time of the next occurring event, formatted according to either `timeFormatSameDay` or `timeFormatOtherDay` as appropriate.
-- `$tminus`: The time remaining until the next occurring event.
-
 ### Configuring Schedule Data
 
 The `schedules` configuration should be a simple key/value object. Its keys are the titles of your event, and its values are are schedules. For example:
@@ -65,6 +57,8 @@ subscriptions: [
 
 Either or both methods of configuring schedule data may be used. Use whichever method is more convenient for your purposes.
 
+> The files listed in the `subscriptions` configuration are parsed are parsed at startup time and if the configuration changes. You can force a reload and update of event-watch using the command `Command Palette ➔ Event Watch: Reload`. Reloading the widget will also reset any warning counts for the warning ignore threshold. This can be helpful when debugging a schedule.
+
 ### Writing a Schedule
 
 Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). If `cronSchedules` is enabled, event-watch will use [later.js's cron parser](http://bunkat.github.io/later/parsers.html#cron) instead. Please see their extensive documentation for further details and examples. If event-watch encounters a problem in parsing your schedule, it will warn you with a short notification.
@@ -74,6 +68,14 @@ Schedules are strings parsed using [later.js's text parser](http://bunkat.github
 | `"at 10:15 am"`  | fires at 10:15am every day |
 | `"every 5 mins"` | fires every 5 minutes every day |
 | `"at 7:03 am on Mon,Fri"` | fires at 7:03 am every Monday and Friday |
+
+### Time and Display Formats
+
+Time formats such as `timeFormatSameDay` and `timeFormatOtherDay` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `Display Format` and `Display Format Tooltip` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
+
+- `$title`: The title of the event as defined by its key in `schedules` or `subscriptions`.
+- `$time`: The time of the next occurring event, formatted according to either `timeFormatSameDay` or `timeFormatOtherDay` as appropriate.
+- `$tminus`: The time remaining until the next occurring event.
 
 ### Example Config
 

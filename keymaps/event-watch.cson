@@ -1,3 +1,4 @@
 'atom-workspace':
   'cmd-alt-e': 'event-watch:update'
+  'cmd-alt-r': 'event-watch:reload'
   'cmd-shift-alt-e': 'event-watch:toggle'

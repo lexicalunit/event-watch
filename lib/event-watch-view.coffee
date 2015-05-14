@@ -1,5 +1,6 @@
 {CompositeDisposable} = require 'atom'
 CSON = require 'season'
+fs = require 'fs-plus'
 later = require 'later'
 moment = require 'moment'
 
@@ -155,7 +156,7 @@ class EventWatchView extends HTMLDivElement
       @subscriptionsData = []
       for sub in @subscriptions
         try
-          data = CSON.readFileSync sub
+          data = CSON.readFileSync fs.normalize(sub)
           @subscriptionsData.splice(@subscriptionsData.length, 0, data)
         catch e
           @warnAboutSubscription sub, e.message
@@ -176,6 +177,7 @@ class EventWatchView extends HTMLDivElement
     @subscriptions = new CompositeDisposable
     @addCommand 'toggle'
     @addCommand 'update'
+    @addCommand 'reload'
     for key, value of @configSpec
       @watchConfig key
 
@@ -215,6 +217,11 @@ class EventWatchView extends HTMLDivElement
       @buildWidget()
     else
       @destroyWidget()
+
+  # Private: Reload configuration and update widget.
+  reload: ->
+    @warns = {}
+    @updateAllConfig()
 
   # Private: Removes all elements in main link widget.
   removeEvents: ->

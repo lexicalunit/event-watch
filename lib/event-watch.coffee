@@ -4,14 +4,6 @@ module.exports =
       type: 'boolean'
       default: false
       description: 'If true, schedules are parsed as cron expressions.'
-    schedules:
-      type: 'object'
-      properties: {}
-    subscriptions:
-      default: []
-      type: 'array'
-      items:
-        type: 'string'
     displayColorStatusbar:
       type: 'string'
       default: '#A07AFF'
@@ -36,7 +28,16 @@ module.exports =
       type: 'integer'
       default: 5
       minimum: 1
-      description: 'The time between updates in minutes. Automatically changes to 1 minute while any warning threshold is met.'
+      description: 'The time between updates in minutes. Automatically changes to 1 while any warning threshold is met.'
+    schedules:
+      type: 'object'
+      properties: {}
+    subscriptions:
+      default: []
+      type: 'array'
+      description: 'List of file paths that should be parsed when looking for schedule data.'
+      items:
+        type: 'string'
     timeFormatOtherDay:
       type: 'string'
       default: 'ddd h:mma'
@@ -50,6 +51,11 @@ module.exports =
       default: 2
       minimum: 1
       description: 'Number of future occurances to display in the tooltip.'
+    warnIgnoreThreshold:
+      type: 'integer'
+      default: 5
+      minimum: 0
+      description: 'Ignore warnings for a problematic schedule after this many notifications.'
     warnThresholdMinutes:
       type: 'integer'
       default: 15

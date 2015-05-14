@@ -2,6 +2,7 @@
 CSON = require 'season'
 later = require 'later'
 moment = require 'moment'
+
 PREFIX = 'event-watch'
 
 # Public: Event watch view element in status bar.
@@ -15,6 +16,7 @@ class EventWatchView extends HTMLDivElement
     @subscriptionsData = []
     @timer = null
     @visible = true
+    @warns = {}
 
   # Public: Attach view element to status bar and do initial setup.
   attach: ->
@@ -89,6 +91,12 @@ class EventWatchView extends HTMLDivElement
 
   # Private: Warn the user about an issue with something using the given title and details.
   warnAboutSomething: (something, title, detail) ->
+    key = something + title + detail
+    if key of @warns
+      @warns[key]++
+    else
+      @warns[key] = 1
+    return if @warns[key] > @warnIgnoreThreshold
     atom.notifications.addWarning PREFIX + ': Issue with ' + something + ' "' + title + '"',
       detail: detail
 

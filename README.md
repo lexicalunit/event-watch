@@ -100,5 +100,4 @@ And if I hover over the widget at `9:11 AM` I would see:
 I would like to add the following features in future versions of event-watch.
 
 - Support schedule data being provided by remote configuration file.
-- Better error handling for schedule data that repeatedly causes the same failures on every update.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).

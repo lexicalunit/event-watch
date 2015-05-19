@@ -61,7 +61,7 @@ Either or both methods of configuring schedule data may be used. Use whichever m
 
 ### Writing a Schedule
 
-Schedules are strings parsed using [later.js's text parser](http://bunkat.github.io/later/parsers.html#text). If `cronSchedules` is enabled, event-watch will use [later.js's cron parser](http://bunkat.github.io/later/parsers.html#cron) instead. Please see their extensive documentation for further details and examples. If event-watch encounters a problem in parsing your schedule, it will warn you with a short notification.
+Schedules are strings parsed using [later.js's text or cron parser](http://bunkat.github.io/later/parsers.html#text). Please see their extensive documentation for further details and examples. If event-watch encounters a problem in parsing your schedule, it will warn you with a short notification.
 
 | Example Schedule | Description |
 | ---------------- | ----------- |

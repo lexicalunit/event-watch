@@ -17,6 +17,8 @@ class EventWatchView extends HTMLDivElement
     @timer = null
     @visible = true
     @parsedSchedules = {}
+    @subscriptions = []
+    @schedules = {}
 
   # Public: Attach view element to status bar and do initial setup.
   attach: ->

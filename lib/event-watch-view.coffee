@@ -14,10 +14,9 @@ class EventWatchView extends HTMLDivElement
     later.date.localTime()
     @classList.add 'inline-block'
     @hasWarning = false
-    @subscriptionsData = []
     @timer = null
     @visible = true
-    @warns = {}
+    @parsedSchedules = {}
 
   # Public: Attach view element to status bar and do initial setup.
   attach: ->
@@ -46,20 +45,7 @@ class EventWatchView extends HTMLDivElement
     eventTime - fromTime <= @warnThresholdMinutes * 60000
 
   # Private: Gets all the events for a particular schedule.
-  getEventsForSchedule: (title, scheduleExpr, count, format, fromTime) ->
-    if typeof scheduleExpr isnt 'string'
-      @warnAboutSchedule title, 'Schedule is not a String.'
-      return []
-
-    if @cronSchedules
-      schedule = later.parse.cron(scheduleExpr)
-    else
-      schedule = later.parse.text(scheduleExpr)
-
-    if schedule.error != -1
-      @warnAboutSchedule title, 'Parse failure at character ' + schedule.error + '.'
-      return []
-
+  getEventsForSchedule: (title, schedule, count, format, fromTime) ->
     nexts = later.schedule(schedule).next(count)
     nexts = [nexts] if count == 1
     events = []
@@ -81,24 +67,14 @@ class EventWatchView extends HTMLDivElement
   #   }
   getEvents: (count, format, fromTime) ->
     events = []
-    addEvents = (data) =>
-      for title, scheduleExpr of data
-        l = @getEventsForSchedule title, scheduleExpr, count, format, fromTime
-        events.splice(events.length, 0, l...)
-    for data in @subscriptionsData
-      addEvents data
-    addEvents @schedules
+    for title, schedule of @parsedSchedules
+      l = @getEventsForSchedule title, schedule, count, format, fromTime
+      events.splice(events.length, 0, l...)
     events
 
   # Private: Warn the user about an issue with something using the given title and details.
   warnAboutSomething: (something, title, detail) ->
-    key = something + title + detail
-    if key of @warns
-      @warns[key]++
-    else
-      @warns[key] = 1
-    return if @warns[key] > @warnIgnoreThreshold
-    atom.notifications.addWarning PREFIX + ': Issue with ' + something + ' "' + title + '"',
+    atom.notifications.addWarning "#{PREFIX}: Issue with #{something} #{title}",
       detail: detail
 
   # Private: Warn the user about an issue with the subscription with the given title.
@@ -144,22 +120,57 @@ class EventWatchView extends HTMLDivElement
 
   # Private: Adds observer for configuration item key.
   watchConfig: (key) ->
-    configKey = PREFIX + '.' + key
+    configKey = "#{PREFIX}.#{key}"
     atom.config.observe configKey, => @updateConfig key
 
   # Private: Updates state for configuration item key.
   updateConfig: (key) ->
-    configKey = PREFIX + '.' + key
+    configKey = "#{PREFIX}.#{key}"
     this[key] = atom.config.get configKey
 
-    if key == 'subscriptions'
-      @subscriptionsData = []
-      for sub in @subscriptions
-        try
-          data = CSON.readFileSync fs.normalize(sub)
-          @subscriptionsData.splice(@subscriptionsData.length, 0, data)
-        catch e
-          @warnAboutSubscription sub, e.message
+    if key == 'subscriptions' or key == 'schedules'
+      @updateParsedSchedules()
+
+  # Private: Returns later.js parsed schedule object for given cron or text expression.
+  parseScheduleExpression: (title, expr) ->
+    if typeof expr isnt 'string'
+      @warnAboutSchedule title, 'Schedule is not a String.'
+      return null
+
+    text_schedule = later.parse.text(expr)
+    if text_schedule.error == -1
+      return text_schedule
+
+    cron_schedule = later.parse.cron(expr)
+    if cron_schedule.error == -1
+      return cron_schedule
+
+    @warnAboutSchedule title, 'Could not parse schedule expression. See console log for details.'
+    console.log "#{PREFIX}: #{title}: text parse failure at character #{text_schedule.error}."
+    console.log "#{PREFIX}: #{title}: cron parse failure at character #{cron_schedule.error}."
+    null
+
+  # Private: Updates parsed scheudle state with latest based on current configuration.
+  updateParsedSchedules: ->
+    # read scheudle data from subscription locaitons
+    subscriptionsData = []
+    for sub in @subscriptions
+      try
+        data = CSON.readFileSync fs.normalize(sub)
+        subscriptionsData.splice(subscriptionsData.length, 0, data)
+      catch e
+        @warnAboutSubscription sub, e.message
+
+    # parse schedules from @schedules and subscription data
+    @parsedSchedules = {}
+    parseSchedules = (data) =>
+      for title, scheduleExpr of data
+        parsedSchedule = @parseScheduleExpression title, scheduleExpr
+        if parsedSchedule != null
+          @parsedSchedules[title] = parsedSchedule
+    for data in subscriptionsData
+      parseSchedules data
+    parseSchedules @schedules
 
   # Private: Updates state for all configuration items.
   updateAllConfig: ->
@@ -169,7 +180,7 @@ class EventWatchView extends HTMLDivElement
   # Private: Attaches package command to callback.
   addCommand: (command) ->
     map = {}
-    map[PREFIX + ':' + command] = => this[command]()
+    map["#{PREFIX}:#{command}"] = => this[command]()
     @subscriptions.add atom.commands.add 'atom-workspace', map
 
   # Private: Sets up the event handlers.
@@ -220,7 +231,6 @@ class EventWatchView extends HTMLDivElement
 
   # Private: Reload configuration and update widget.
   reload: ->
-    @warns = {}
     @updateAllConfig()
 
   # Private: Removes all elements in main link widget.

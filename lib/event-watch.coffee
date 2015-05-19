@@ -1,9 +1,5 @@
 module.exports =
   config:
-    cronSchedules:
-      type: 'boolean'
-      default: false
-      description: 'If true, schedules are parsed as cron expressions.'
     displayColorStatusbar:
       type: 'string'
       default: '#A07AFF'
@@ -51,11 +47,6 @@ module.exports =
       default: 2
       minimum: 1
       description: 'Number of future occurances to display in the tooltip.'
-    warnIgnoreThreshold:
-      type: 'integer'
-      default: 5
-      minimum: 0
-      description: 'Ignore warnings for a problematic schedule after this many notifications.'
     warnThresholdMinutes:
       type: 'integer'
       default: 15

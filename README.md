@@ -57,7 +57,7 @@ subscriptions: [
 
 Either or both methods of configuring schedule data may be used. Use whichever method is more convenient for your purposes.
 
-> The files listed in the `subscriptions` configuration are parsed are parsed at startup time and if the configuration changes. You can force a reload and update of event-watch using the command `Command Palette ➔ Event Watch: Reload`. Reloading the widget will also reset any warning counts for the warning ignore threshold. This can be helpful when debugging a schedule.
+> The files listed in the `subscriptions` configuration are parsed are parsed at startup time and if the configuration changes. You can force a reload and update of event-watch using the command `Command Palette ➔ Event Watch: Reload`.
 
 ### Writing a Schedule
 

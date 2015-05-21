@@ -1,7 +1,7 @@
 {
   "name": "event-watch",
   "main": "./lib/event-watch",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "Keep watch on important upcoming events.",
   "repository": "https://github.com/lexicalunit/event-watch",
   "license": "Public domain",

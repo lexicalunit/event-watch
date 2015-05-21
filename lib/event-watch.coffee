@@ -1,5 +1,9 @@
 module.exports =
   config:
+    cronSchedules:
+      type: 'boolean'
+      default: false
+      description: 'If true, all schedule data will be parsed as cron expressions.'
     displayColorStatusbar:
       type: 'string'
       default: '#A07AFF'

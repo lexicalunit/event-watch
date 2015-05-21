@@ -19,6 +19,7 @@ class EventWatchView extends HTMLDivElement
     @parsedSchedules = {}
     @subscriptions = []
     @schedules = {}
+    @overrideDatetime = false # for test
 
   # Public: Attach view element to status bar and do initial setup.
   attach: ->
@@ -29,7 +30,7 @@ class EventWatchView extends HTMLDivElement
   # Public: Destroys and removes this element.
   destroy: ->
     @destroyWidget()
-    @subscriptions?.dispose()
+    @disposables?.dispose()
 
   # Private: Returns humanized remaining time string.
   formatTminus: (dt, fromTime) ->
@@ -48,7 +49,7 @@ class EventWatchView extends HTMLDivElement
 
   # Private: Gets all the events for a particular schedule.
   getEventsForSchedule: (title, schedule, count, format, fromTime) ->
-    nexts = later.schedule(schedule).next(count)
+    nexts = later.schedule(schedule).next(count, @getDatetime())
     nexts = [nexts] if count == 1
     events = []
     for next in nexts
@@ -128,8 +129,8 @@ class EventWatchView extends HTMLDivElement
   # Private: Updates state for configuration item key.
   updateConfig: (key) ->
     configKey = "#{PREFIX}.#{key}"
+    return if this[key] == atom.config.get configKey
     this[key] = atom.config.get configKey
-
     if key == 'subscriptions' or key == 'schedules'
       @updateParsedSchedules()
 
@@ -139,17 +140,16 @@ class EventWatchView extends HTMLDivElement
       @warnAboutSchedule title, 'Schedule is not a String.'
       return null
 
-    text_schedule = later.parse.text(expr)
-    if text_schedule.error == -1
-      return text_schedule
+    if @cronSchedules
+      schedule = later.parse.cron(expr)
+      # TODO: later.js has no way to detect parse error in cron expression :(
+      return scheudle
 
-    cron_schedule = later.parse.cron(expr)
-    if cron_schedule.error == -1
-      return cron_schedule
+    schedule = later.parse.text(expr)
+    if schedule.error == -1
+      return schedule
 
-    @warnAboutSchedule title, 'Could not parse schedule expression. See console log for details.'
-    console.log "#{PREFIX}: #{title}: text parse failure at character #{text_schedule.error}."
-    console.log "#{PREFIX}: #{title}: cron parse failure at character #{cron_schedule.error}."
+    @warnAboutSchedule title, "#{PREFIX}: #{title}: text parse failure at character #{text_schedule.error}."
     null
 
   # Private: Updates parsed scheudle state with latest based on current configuration.
@@ -183,11 +183,11 @@ class EventWatchView extends HTMLDivElement
   addCommand: (command) ->
     map = {}
     map["#{PREFIX}:#{command}"] = => this[command]()
-    @subscriptions.add atom.commands.add 'atom-workspace', map
+    @disposables.add atom.commands.add 'atom-workspace', map
 
   # Private: Sets up the event handlers.
   handleEvents: ->
-    @subscriptions = new CompositeDisposable
+    @disposables = new CompositeDisposable
     @addCommand 'toggle'
     @addCommand 'update'
     @addCommand 'reload'
@@ -212,9 +212,13 @@ class EventWatchView extends HTMLDivElement
     element.classList.add classes...
     element
 
+  getDatetime: ->
+    return @overrideDatetime if @overrideDatetime
+    return new Date
+
   # Private: Generate the content of the tooltip.
   tooltipTitle: ->
-    now = new Date
+    now = @getDatetime()
     tip = ''
     for event in @getEvents(@tooltipDetails, @displayFormatTooltip + '<br />', now)
       text = event.displayText
@@ -243,7 +247,7 @@ class EventWatchView extends HTMLDivElement
   # Private: Displays events in stasus bar.
   # Return true iff a displayed event is within warning threshold.
   displayEvents: ->
-    now = new Date
+    now = @getDatetime()
     hasWarning = false
     for event in @getEvents 1, @displayFormat, now
       widget = @createElement 'span', 'inline-block'

@@ -104,3 +104,4 @@ I would like to add the following features in future versions of event-watch.
 - Support schedule data being provided by remote configuration file.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).
 - More granularity when config updates, so that we parse schedules a minimal numbers of times.
+- More unit tests. Tests for every configuration option. Tests for tooltip and commands.

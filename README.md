@@ -1,4 +1,4 @@
-# Event Watch
+# Event Watch [![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch)
 
 Based on the current time, displays the time of the next recurring event.
 
@@ -105,4 +105,4 @@ I would like to add the following features in future versions of event-watch.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).
 - More granularity when config updates, so that we parse schedules a minimal numbers of times.
 - More unit tests. Tests for every configuration option. Tests for tooltip and commands.
-- Continuous integration for OS X and Windows.
+- Continuous integration for Windows.

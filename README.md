@@ -1,4 +1,6 @@
-# Event Watch [![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch)
+# Event Watch
+
+[![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch) [![Dependency Status](https://david-dm.org/lexicalunit/event-watch.svg)](https://david-dm.org/lexicalunit/event-watch) [![Build status](https://ci.appveyor.com/api/projects/status/prnwjjwaa7gita5l/branch/master?svg=true)](https://ci.appveyor.com/project/lexicalunit/event-watch/branch/master)
 
 Displays the time until your next scheduled event occurs in the Atom status-bar. Schedules can be created for any kind of recurring event. For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
@@ -103,5 +105,4 @@ I would like to add the following features in future versions of event-watch.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).
 - More granularity when config updates, so that we parse schedules a minimal numbers of times.
 - More unit tests. Tests for every configuration option. Tests for tooltip and commands.
-- Continuous integration for Windows.
 - Add screenshots for things other than my Northbound/Southbound train example.

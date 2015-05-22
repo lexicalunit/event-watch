@@ -1,8 +1,6 @@
 # Event Watch [![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch)
 
-Based on the current time, displays the time of the next recurring event.
-
-For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
+Displays the time until your next scheduled event occurs in the Atom status-bar. Schedules can be created for any kind of recurring event. For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
 ![9_15](https://cloud.githubusercontent.com/assets/1903876/7494968/8f9965f8-f3d0-11e4-84e4-e884f70065b5.png)
 
@@ -106,3 +104,4 @@ I would like to add the following features in future versions of event-watch.
 - More granularity when config updates, so that we parse schedules a minimal numbers of times.
 - More unit tests. Tests for every configuration option. Tests for tooltip and commands.
 - Continuous integration for Windows.
+- Add screenshots for things other than my Northbound/Southbound train example.

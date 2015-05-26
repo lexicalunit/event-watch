@@ -101,6 +101,7 @@ And if I hover over the widget at `9:11 AM` I would see:
 
 I would like to add the following features in future versions of event-watch.
 
+- Fix weird issue where tooltip is generated twice sometimes.
 - Support schedule data being provided by remote configuration file.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).
 - More granularity when config updates, so that we parse schedules a minimal numbers of times.

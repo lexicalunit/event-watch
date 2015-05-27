@@ -35,7 +35,10 @@ class EventWatchView extends HTMLDivElement
 
   # Private: Returns humanized remaining time string.
   formatTminus: (dt, fromTime) ->
-    moment.duration(dt - fromTime).humanize()
+    dt = moment.duration(dt - fromTime)
+    if dt < moment.duration(1, 'seconds')
+      return 'now'
+    dt.humanize()
 
   # Private: Returns formatted time string.
   formatTime: (dt, fromTime) ->
@@ -198,16 +201,17 @@ class EventWatchView extends HTMLDivElement
       @watchConfig key
 
   # Private: Sets up timeout for next update.
-  # Use optional interval (in miliseconds) if given, otherwise use configuration setting.
+  # Use optional interval (in minutes) if given, otherwise use configuration setting.
   startTimer: (interval) ->
-    interval = @refreshIntervalMinutes * 60000 if !interval
-    if @timer
-      clearInterval(@timer)
-    @timer = setInterval((=> @update()), interval)
+    interval = @refreshIntervalMinutes if !interval
+    @stopTimer()
+    sched = later.parse.recur().every(interval).minute()
+    @timer = later.setInterval (=> @update()), sched
 
   # Private: Stops timeout for next update.
   stopTimer: ->
-    clearInterval(@timer)
+    if @timer
+      @timer.clear()
 
   # Private: Create DOM element of given type with given classes.
   createElement: (type, classes...) ->
@@ -280,7 +284,7 @@ class EventWatchView extends HTMLDivElement
     @hasWarning = @displayEvents()
     @generateTooltipTitle()
     if !wasWarning && @hasWarning
-      @startTimer 60000  # 1 minute refresh during warnings
+      @startTimer 1  # 1 minute refresh during warnings
     else if wasWarning && !@hasWarning
       @startTimer()
 

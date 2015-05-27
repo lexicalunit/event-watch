@@ -19,7 +19,8 @@ describe 'EventWatch', ->
       expect(element).toBeDefined()
 
     it 'element has expected data', ->
-      element.overrideDatetime = new Date(1982, 4, 24, 5, 30)
+      element.getDatetime = ->
+        new Date(1982, 4, 24, 5, 30)
       atom.config.set 'event-watch.displayFormat', '$title,$time,$tminus'
       atom.config.set 'event-watch.schedules',
         test1: 'at 6:30'

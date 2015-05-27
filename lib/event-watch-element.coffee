@@ -22,7 +22,6 @@ class EventWatchElement extends View
       subscriptions: []
     @disposables = []           # CompositeDisposable objects
     @hasWarning = false         # true iff any warning being displayed
-    @overrideDatetime = false   # if a Date object, use as current time
     @parsedSchedules = {}       # parsed schedules { title: schedule, ...}
     @parsedSubscriptions = {}   # parsed subscriptions { title: schedule, ...}
     @tile = null                # status-bar tile element
@@ -226,9 +225,9 @@ class EventWatchElement extends View
     element.classList.add classes...
     element
 
+  # Private: Gets the current time (provides an override hook for testing).
   getDatetime: ->
-    return @overrideDatetime if @overrideDatetime
-    return new Date
+    new Date
 
   # Private: Generate the content of the tooltip.
   generateTooltipTitle: ->

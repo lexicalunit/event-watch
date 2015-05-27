@@ -101,9 +101,8 @@ And if I hover over the widget at `9:11 AM` I would see:
 
 I would like to add the following features in future versions of event-watch.
 
-- Refactor and unify creation of tooltip and status-bar label?
-- Support schedule data being provided by remote configuration file.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).
-- More granularity when config updates, so that we parse schedules a minimal numbers of times.
 - More unit tests. Tests for every configuration option. Tests for tooltip and commands.
 - Add screenshots for things other than my Northbound/Southbound train example.
+- Refactor and unify creation of tooltip and status-bar label?
+- Support schedule data being provided by remote configuration file? Or from a common dot file?

@@ -57,14 +57,11 @@ module.exports =
       minimum: 1
       description: 'Events occurring within this many minutes are shown in warning color.'
 
-  activate: ->
-
   consumeStatusBar: (statusBar) ->
-    EventWatchView = require './event-watch-view'
-    @view = new EventWatchView
-    @view.initialize @config, statusBar
-    @view.attach()
+    EventWatchElement = require './event-watch-element'
+    # setTimeout improves status-bar load time
+    setTimeout (=> @element = new EventWatchElement @config, statusBar), 0
 
   deactivate: ->
-    @view?.destroy()
-    @view = null
+    @element?.destroy()
+    @element = null

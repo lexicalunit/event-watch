@@ -32,7 +32,7 @@ Within this config you should see various settings, for example you might see `c
 
 ### Configuring Schedule Data
 
-The `schedules` configuration should be a simple key/value object. Its keys are the titles of your event, and its values are are schedules. For example:
+The `schedules` configuration should be a simple key/value object. Its keys are the titles of your events, and its values are the schedules. For example:
 
 ```cson
 schedules:

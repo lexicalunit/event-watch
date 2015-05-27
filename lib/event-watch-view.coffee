@@ -252,6 +252,7 @@ class EventWatchView extends HTMLDivElement
   # Private: Reload configuration and update widget.
   reload: ->
     @updateAllConfig()
+    @update()
 
   # Private: Removes all elements in main link widget.
   removeEvents: ->

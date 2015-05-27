@@ -59,8 +59,7 @@ module.exports =
 
   consumeStatusBar: (statusBar) ->
     EventWatchElement = require './event-watch-element'
-    # setTimeout improves status-bar load time
-    setTimeout (=> @element = new EventWatchElement @config, statusBar), 0
+    @element = new EventWatchElement @config, statusBar
 
   deactivate: ->
     @element?.destroy()

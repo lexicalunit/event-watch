@@ -227,7 +227,7 @@ class EventWatchElement extends View
     element
 
   getDatetime: ->
-    return @config.overrideDatetime if @config.overrideDatetime
+    return @overrideDatetime if @overrideDatetime
     return new Date
 
   # Private: Generate the content of the tooltip.

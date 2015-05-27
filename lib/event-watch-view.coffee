@@ -14,12 +14,13 @@ class EventWatchView extends HTMLDivElement
     later.date.localTime()
     @classList.add 'inline-block'
     @hasWarning = false
-    @timer = null
-    @visible = true
+    @overrideDatetime = false
     @parsedSchedules = {}
-    @subscriptions = []
     @schedules = {}
-    @overrideDatetime = false # for test
+    @subscriptions = []
+    @timer = null
+    @tooltipTitle = ''
+    @visible = true
 
   # Public: Attach view element to status bar and do initial setup.
   attach: ->
@@ -63,16 +64,14 @@ class EventWatchView extends HTMLDivElement
     events
 
   # Private: Returns count events with text formatted according to given display format.
-  # Return value is array of events objects like:
-  #   {
+  # Return value is dictionary of events objects like:
+  #   title:
   #     displayText: string; formatted event text.
   #     isWarning: boolean; true iff event meets warning threshold.
-  #   }
   getEvents: (count, format, fromTime) ->
-    events = []
+    events = {}
     for title, schedule of @parsedSchedules
-      l = @getEventsForSchedule title, schedule, count, format, fromTime
-      events.splice(events.length, 0, l...)
+      events[title] = @getEventsForSchedule title, schedule, count, format, fromTime
     events
 
   # Private: Warn the user about an issue with something using the given title and details.
@@ -118,8 +117,12 @@ class EventWatchView extends HTMLDivElement
     @clickSubscription = dispose: => @removeEventListener 'click', clickHandler
     @appendChild @link
     @tooltip = atom.tooltips.add @link,
-      title: => @tooltipTitle()
+      title: => @tooltipTitle
       html: true
+      animation: false
+      delay:
+        show: 0
+        hide: 0
 
   # Private: Adds observer for configuration item key.
   watchConfig: (key) ->
@@ -217,15 +220,22 @@ class EventWatchView extends HTMLDivElement
     return new Date
 
   # Private: Generate the content of the tooltip.
-  tooltipTitle: ->
+  generateTooltipTitle: ->
     now = @getDatetime()
-    tip = ''
-    for event in @getEvents(@tooltipDetails, @displayFormatTooltip + '<br />', now)
-      text = event.displayText
-      color = if event.isWarning then @displayColorWarning else @displayColorTooltip
-      text = "<font color='#{color}'>#{text}</font>"
-      tip += text
-    tip
+    tip = @createElement 'ul', PREFIX
+    currentSchedule = ''
+    for title, events of @getEvents @tooltipDetails, @displayFormatTooltip, now
+      for event in events
+        text = event.displayText
+        li = @createElement 'li'
+        if event.isWarning
+          li.classList.add 'warn'
+          li.style.color = @displayColorWarning
+        else
+          li.style.color = @displayColorTooltip
+        li.innerHTML = text
+        tip.appendChild(li)
+    @tooltipTitle = tip.outerHTML
 
   # Private: Toggles on or off the widget.
   toggle: ->
@@ -249,16 +259,17 @@ class EventWatchView extends HTMLDivElement
   displayEvents: ->
     now = @getDatetime()
     hasWarning = false
-    for event in @getEvents 1, @displayFormat, now
-      widget = @createElement 'span', 'inline-block'
-      if event.isWarning
-        widget.classList.add 'warn'
-        widget.style.color = @displayColorWarning
-        hasWarning = true
-      else
-        widget.style.color = @displayColorStatusbar
-      widget.textContent = event.displayText
-      @link.appendChild widget
+    for title, events of @getEvents 1, @displayFormat, now
+      for event in events
+        widget = @createElement 'span', 'inline-block'
+        if event.isWarning
+          widget.classList.add 'warn'
+          widget.style.color = @displayColorWarning
+          hasWarning = true
+        else
+          widget.style.color = @displayColorStatusbar
+        widget.textContent = event.displayText
+        @link.appendChild widget
     hasWarning
 
   # Private: Refresh view with current event information.
@@ -267,6 +278,7 @@ class EventWatchView extends HTMLDivElement
     wasWarning = @hasWarning
     @removeEvents()
     @hasWarning = @displayEvents()
+    @generateTooltipTitle()
     if !wasWarning && @hasWarning
       @startTimer 60000  # 1 minute refresh during warnings
     else if wasWarning && !@hasWarning

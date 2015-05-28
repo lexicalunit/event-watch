@@ -1,5 +1,6 @@
 {
   "name": "event-watch",
+  "author": "lexicalunit <lexicalunit@lexicalunit.com>",
   "main": "./lib/event-watch",
   "version": "3.7.2",
   "description": "Keep watch on important upcoming events.",
@@ -23,6 +24,12 @@
       }
     }
   },
+  "keywords": [
+    "indentation",
+    "indicator",
+    "status-bar",
+    "productivity"
+  ],
   "dependencies": {
     "atom-space-pen-views": "^2.0.5",
     "fs-plus": "^2.8.0",

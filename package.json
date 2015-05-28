@@ -25,10 +25,11 @@
     }
   },
   "keywords": [
-    "indentation",
+    "events",
     "indicator",
     "status-bar",
-    "productivity"
+    "productivity",
+    "scheduling"
   ],
   "dependencies": {
     "atom-space-pen-views": "^2.0.5",

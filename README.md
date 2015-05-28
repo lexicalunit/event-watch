@@ -101,6 +101,8 @@ And if I hover over the widget at `9:11 AM` I would see:
 
 I would like to add the following features in future versions of event-watch.
 
+- Option to configure some events to display in-editor notifications.
+- Detect "last event of the day" and display in-editor warning.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).
 - More unit tests. Tests for every configuration option. Tests for tooltip and commands.
 - Add screenshots for things other than my Northbound/Southbound train example.

@@ -24,6 +24,12 @@ module.exports =
       type: 'string'
       default: '$title: $time [$tminus]'
       description: 'The tooltip display format for events.'
+    notifications:
+      type: 'array'
+      default: []
+      description: 'Noisy notifications for events with these titles.'
+      items:
+        type: 'string'
     refreshIntervalMinutes:
       type: 'integer'
       default: 5

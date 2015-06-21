@@ -11,7 +11,7 @@ PREFIX = 'event-watch'
 module.exports =
 class EventWatchElement extends View
   @content: ->
-    @div class:"#{PREFIX} inline-block", ->
+    @div class: "#{PREFIX} inline-block"
 
   # Public: Initialize event watch indicator element.
   initialize: (configSpec, @statusBar) ->
@@ -57,7 +57,7 @@ class EventWatchElement extends View
 
   # Private: Returns formatted time string.
   formatTime: (dt, fromTime) ->
-    if dt.getDay() != fromTime.getDay()
+    if dt.getDay() isnt fromTime.getDay()
       moment(dt).format(@config.timeFormatOtherDay)
     else
       moment(dt).format(@config.timeFormatSameDay)
@@ -69,7 +69,7 @@ class EventWatchElement extends View
   # Private: Gets all the events for a particular schedule.
   getEventsForSchedule: (title, schedule, count, format, fromTime) ->
     nexts = later.schedule(schedule).next(count, @getDatetime())
-    nexts = [nexts] if count == 1
+    nexts = [nexts] if count is 1
     events = []
     for next in nexts
       text = format.slice(0)
@@ -127,11 +127,11 @@ class EventWatchElement extends View
   # Private: Updates state for configuration item key.
   updateConfig: (key) ->
     configKey = "#{PREFIX}.#{key}"
-    return if this.config[key] == atom.config.get configKey
+    return if this.config[key] is atom.config.get configKey
     this.config[key] = atom.config.get configKey
-    if key == 'schedules'
+    if key is 'schedules'
       @updateParsedSchedules()
-    else if key == 'subscriptions'
+    else if key is 'subscriptions'
       @updateParsedSubscriptions()
 
   # Private: Returns later.js parsed schedule object for given cron or text expression.
@@ -146,7 +146,7 @@ class EventWatchElement extends View
       return scheudle
 
     schedule = later.parse.text(expr)
-    if schedule.error == -1
+    if schedule.error is -1
       return schedule
 
     @warnAboutSchedule title, "#{PREFIX}: #{title}: text parse failure at character #{text_schedule.error}."
@@ -156,7 +156,7 @@ class EventWatchElement extends View
   parseSchedules: (store, data) ->
     for title, scheduleExpr of data
       parsedSchedule = @parseScheduleExpression title, scheduleExpr
-      if parsedSchedule != null
+      if parsedSchedule isnt null
         store[title] = parsedSchedule
 
   # Private: Updates parsed subscriptions with latest based on current configuration.
@@ -209,7 +209,7 @@ class EventWatchElement extends View
   # Private: Sets up timeout for next update.
   # Use optional interval (in minutes) if given, otherwise use configuration setting.
   startTimer: (interval) ->
-    interval = @config.refreshIntervalMinutes if !interval
+    interval = @config.refreshIntervalMinutes if not interval
     @stopTimer()
     sched = later.parse.recur().every(interval).minute()
     @timer = later.setInterval (=> @update()), sched
@@ -249,7 +249,7 @@ class EventWatchElement extends View
 
   # Private: Toggles on or off the widget.
   toggle: ->
-    @visible = !@visible
+    @visible = not @visible
     if @visible
       @buildWidget()
       @startTimer()
@@ -283,12 +283,12 @@ class EventWatchElement extends View
 
   # Private: Refresh element with current event information.
   update: ->
-    return if !@visible
+    return unless @visible
     wasWarning = @hasWarning
     @empty()
     @hasWarning = @displayEvents()
     @generateTooltipTitle()
-    if !wasWarning && @hasWarning
+    if not wasWarning and @hasWarning
       @startTimer 1  # 1 minute refresh during warnings
-    else if wasWarning && !@hasWarning
+    else if wasWarning and not @hasWarning
       @startTimer()

@@ -9,14 +9,6 @@
   "engines": {
     "atom": ">=0.194.0 <2.0.0"
   },
-  "coffeelintConfig": {
-    "max_line_length": {
-      "name": "max_line_length",
-      "value": 120,
-      "level": "warn",
-      "limitComments": true
-    }
-  },
   "consumedServices": {
     "status-bar": {
       "versions": {

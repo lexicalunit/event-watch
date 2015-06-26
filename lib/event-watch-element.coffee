@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-{View}  = require 'atom-space-pen-views'
+{View} = require 'atom-space-pen-views'
 CSON = require 'season'
 fs = require 'fs-plus'
 later = require 'later'
@@ -289,6 +289,7 @@ class EventWatchElement extends View
     @hasWarning = @displayEvents()
     @generateTooltipTitle()
     if not wasWarning and @hasWarning
-      @startTimer 1  # 1 minute refresh during warnings
+      # 1 minute refresh during warnings
+      @startTimer 1
     else if wasWarning and not @hasWarning
       @startTimer()

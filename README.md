@@ -1,8 +1,8 @@
 # Event Watch
 
-[![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch) [![Dependency Status](https://david-dm.org/lexicalunit/event-watch.svg)](https://david-dm.org/lexicalunit/event-watch) [![Build status](https://ci.appveyor.com/api/projects/status/mld725r04odu9dt7/branch/master?svg=true)](https://ci.appveyor.com/project/lexicalunit/event-watch/branch/master)
+[![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch) [![Dependency Status](https://david-dm.org/lexicalunit/event-watch.svg)](https://david-dm.org/lexicalunit/event-watch)
 
-Displays the time until your next scheduled event occurs in the Atom status-bar. Schedules can be created for any kind of recurring event. For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
+Displays the time until your next scheduled event occurs in the Atom status-bar. Schedules can be created for any type recurring event. For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
 ![9_15](https://cloud.githubusercontent.com/assets/1903876/7494968/8f9965f8-f3d0-11e4-84e4-e884f70065b5.png)
 

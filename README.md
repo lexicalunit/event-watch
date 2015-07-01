@@ -22,7 +22,7 @@ Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 
 ## Configuration
 
-Most configuration options can be set by opening this package's settings once it is installed. Configuring your schedules data is handled by editing your Atom configuration file. You can open it using
+Most configuration options can be set by opening this package's settings once it's installed. Configuring your schedules data is handled by editing your Atom configuration file. You can open it using
 
 ```
 Command Palette ➔ Application: Open Your Config
@@ -57,7 +57,7 @@ subscriptions: [
 
 Either or both methods of configuring schedule data may be used. Use whichever method is more convenient for your purposes.
 
-> The files listed in the `subscriptions` configuration are parsed are parsed at startup time and if the configuration changes. You can force a reload and update of event-watch using the command `Command Palette ➔ Event Watch: Reload`.
+> The files listed in the `subscriptions` configuration are parsed at startup time and if the configuration changes. You can force a reload and update of event-watch using the command `Command Palette ➔ Event Watch: Reload`.
 
 ### Writing a Schedule
 

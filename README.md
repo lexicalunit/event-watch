@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch) [![Dependency Status](https://david-dm.org/lexicalunit/event-watch.svg)](https://david-dm.org/lexicalunit/event-watch)
 
-Displays the time until your next scheduled event occurs in the Atom status-bar. Schedules can be created for any type recurring event. For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
+Displays the time until your next scheduled event occurs in the Atom status-bar. Create schedules for any recurring event! For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
 ![9_15](https://cloud.githubusercontent.com/assets/1903876/7494968/8f9965f8-f3d0-11e4-84e4-e884f70065b5.png)
 
@@ -22,13 +22,13 @@ Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 
 ## Configuration
 
-Most configuration options can be set by opening this package's settings once it's installed. Configuring your schedules data is handled by editing your Atom configuration file. You can open it using
+Set most configuration options by opening this package's settings once it's installed. Configuring schedule data, however, by editing your Atom configuration file. You can open it using
 
 ```
 Command Palette ➔ Application: Open Your Config
 ```
 
-Within this config you should see various settings, for example you might see `core`, `editor`, `minimap` (if you have it installed), as well as other package configurations. You will need to provide schedule data for `event-watch` specifying your recurring event schedules.
+Within this config you should see configuration data for installed packages, for example you might see `core`, `editor`, `minimap` (if you have it installed), as well as other package configurations. You will need to provide schedule data for `event-watch` specifying your recurring event schedules.
 
 ### Configuring Schedule Data
 
@@ -55,9 +55,9 @@ subscriptions: [
 ]
 ```
 
-Either or both methods of configuring schedule data may be used. Use whichever method is more convenient for your purposes.
+Either or both methods of configuring schedule data are valid. Use whichever method is more convenient for your purposes.
 
-> The files listed in the `subscriptions` configuration are parsed at startup time and if the configuration changes. You can force a reload and update of event-watch using the command `Command Palette ➔ Event Watch: Reload`.
+> The files listed in the `subscriptions` configuration parse at startup time and if the configuration changes. You can force a reload and update of event-watch using the command `Command Palette ➔ Event Watch: Reload`.
 
 ### Writing a Schedule
 
@@ -71,7 +71,7 @@ Schedules are strings parsed using [later.js's text or cron parser](http://bunka
 
 ### Time and Display Formats
 
-Time formats such as `timeFormatSameDay` and `timeFormatOtherDay` are specified using [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `Display Format` and `Display Format Tooltip` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
+Time formats such as `timeFormatSameDay` and `timeFormatOtherDay` must fit [moment.js's format specification](http://momentjs.com/docs/#/displaying/format/). Display formats like `Display Format` and `Display Format Tooltip` are strings that specify how your event times should be displayed in the status bar or tooltip areas. The following values are permitted and will be interpolated automatically in display formats:
 
 - `$title`: The title of the event as defined by its key in `schedules` or `subscriptions`.
 - `$time`: The time of the next occurring event, formatted according to either `timeFormatSameDay` or `timeFormatOtherDay` as appropriate.
@@ -101,10 +101,10 @@ And if I hover over the widget at `9:11 AM` I would see:
 
 I would like to add the following features in future versions of event-watch.
 
-- Option to configure some events to display in-editor notifications.
+- Option to configure certain events to display in-editor notifications.
 - Detect "last event of the day" and display in-editor warning.
 - Time formatting options for `$tminus` besides [humanized durations](http://momentjs.com/docs/#/durations/humanize/).
 - More unit tests. Tests for every configuration option. Tests for tooltip and commands.
 - Add screenshots for things other than my Northbound/Southbound train example.
 - Refactor and unify creation of tooltip and status-bar label?
-- Support schedule data being provided by remote configuration file? Or from a common dot file?
+- Support schedule data provided by remote configuration file? Or from a common dot file?

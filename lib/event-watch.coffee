@@ -12,10 +12,22 @@ module.exports =
       type: 'string'
       default: '#FFFFFF'
       description: 'A valid CSS color expression for the normal font color in the tooltip.'
-    displayColorWarning:
+    displayColorWarningStatusbar:
       type: 'string'
       default: '#FF4444'
-      description: 'A valid CSS color expression for the font color when the warning threshold has been met.'
+      description: 'A valid CSS color expression for the statusbar font color when the warning threshold has been met.'
+    displayColorWarningTooltip:
+      type: 'string'
+      default: '#FF4444'
+      description: 'A valid CSS color expression for the tooltup font color when the warning threshold has been met.'
+    displayFontWeightStatusbar:
+      type: 'string'
+      default: 'normal'
+      description: 'CSS font-weight property for statusbar font.'
+    displayFontWeightTooltip:
+      type: 'string'
+      default: 'normal'
+      description: 'CSS font-weight property for tooltip font.'
     displayFormat:
       type: 'string'
       default: '$title: $tminus'

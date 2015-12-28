@@ -238,9 +238,10 @@ class EventWatchElement extends View
       for event in events
         text = event.displayText
         li = @createElement 'li'
+        li.style.fontWeight = @config.displayFontWeightStatusbar
         if event.isWarning
           li.classList.add 'warn'
-          li.style.color = @config.displayColorWarning
+          li.style.color = @config.displayColorWarningTooltip
         else
           li.style.color = @config.displayColorTooltip
         li.innerHTML = text
@@ -271,9 +272,10 @@ class EventWatchElement extends View
     for title, events of @getEvents 1, @config.displayFormat, now
       for event in events
         widget = @createElement 'span', 'inline-block'
+        widget.style.fontWeight = @config.displayFontWeightStatusbar
         if event.isWarning
           widget.classList.add 'warn'
-          widget.style.color = @config.displayColorWarning
+          widget.style.color = @config.displayColorWarningStatusbar
           hasWarning = true
         else
           widget.style.color = @config.displayColorStatusbar

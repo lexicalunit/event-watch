@@ -1,6 +1,10 @@
 # Event Watch
 
-[![Build Status](https://travis-ci.org/lexicalunit/event-watch.svg?branch=master)](https://travis-ci.org/lexicalunit/event-watch) [![Dependency Status](https://david-dm.org/lexicalunit/event-watch.svg)](https://david-dm.org/lexicalunit/event-watch)
+[![apm package][apm-ver-link]][releases]
+[![][travis-ci-badge]][travis-ci]
+[![][david-badge]][david]
+[![][dl-badge]][apm-pkg-link]
+[![][mit-badge]][mit]
 
 Displays the time until your next scheduled event occurs in the Atom status-bar. Create schedules for any recurring event! For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
 
@@ -108,3 +112,20 @@ I would like to add the following features in future versions of event-watch.
 - Add screenshots for things other than my Northbound/Southbound train example.
 - Refactor and unify creation of tooltip and status-bar label?
 - Support schedule data provided by remote configuration file? Or from a common dot file?
+
+---
+
+[MIT][mit] © [lexicalunit][author] et [al][contributors]
+
+[mit]:              http://opensource.org/licenses/MIT
+[author]:           http://github.com/lexicalunit
+[contributors]:     https://github.com/lexicalunit/event-watch/graphs/contributors
+[releases]:         https://github.com/lexicalunit/event-watch/releases
+[mit-badge]:        https://img.shields.io/apm/l/event-watch.svg
+[apm-pkg-link]:     https://atom.io/packages/event-watch
+[apm-ver-link]:     https://img.shields.io/apm/v/event-watch.svg
+[dl-badge]:         http://img.shields.io/apm/dm/event-watch.svg
+[travis-ci-badge]:  https://travis-ci.org/lexicalunit/event-watch.svg?branch=master
+[travis-ci]:        https://travis-ci.org/lexicalunit/event-watch
+[david-badge]:      https://david-dm.org/lexicalunit/event-watch.svg
+[david]:            https://david-dm.org/lexicalunit/event-watch

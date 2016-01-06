@@ -5,7 +5,7 @@
   "version": "3.9.0",
   "description": "Keep watch on important upcoming events.",
   "repository": "https://github.com/lexicalunit/event-watch",
-  "license": "Unlicense",
+  "license": "MIT",
   "engines": {
     "atom": ">=0.194.0 <2.0.0"
   },

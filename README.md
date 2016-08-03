@@ -6,7 +6,7 @@
 [![][dl-badge]][apm-pkg-link]
 [![][mit-badge]][mit]
 
-Displays the time until your next scheduled event occurs in the Atom status-bar. Create schedules for any recurring event! For example, I use this to keep track of when my Southbound and Northbound trains are next leaving, so I know when I need to pack up my laptop and head over to the station.
+Create notifications for all your recurring events! For example, I use this to keep track of when my Southbound and Northbound trains are next leaving. That way I know when I need to pack up my laptop and head over to the station.
 
 ![9_15](https://cloud.githubusercontent.com/assets/1903876/7494968/8f9965f8-f3d0-11e4-84e4-e884f70065b5.png)
 
@@ -26,7 +26,7 @@ Command Palette ➔ Settings View: Install Packages And Themes ➔ Event Watch
 
 ## Configuration
 
-Set most configuration options by opening this package's settings once it's installed. Configuring schedule data, however, by editing your Atom configuration file. You can open it using
+Most configuration options for this package are available through your Atom settings panel. Schedule data on the other hand must be edited directly. Open your Atom configuration file:
 
 ```
 Command Palette ➔ Application: Open Your Config

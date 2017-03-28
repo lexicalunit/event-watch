@@ -34,8 +34,8 @@ describe('EventWatch', function () {
         test4: 'every 7 mins'
       })
       EventWatch.element.update()
-      expect(EventWatch.element.hasClass('event-watch')).toBeTruthy
-      expect(EventWatch.element.hasClass('inline-block')).toBeTruthy
+      expect(EventWatch.element.hasClass('event-watch')).toBeTruthy()
+      expect(EventWatch.element.hasClass('inline-block')).toBeTruthy()
       expect(EventWatch.element.children()[0].innerHTML).toContain('test1,6:30am,an hour')
       expect(EventWatch.element.children()[0].style.cssText).toContain('color: rgb(160, 122, 255);')
       expect(EventWatch.element.children()[1].innerHTML).toContain('test2,5:55am,25 minutes')

@@ -25,10 +25,10 @@
   ],
   "dependencies": {
     "atom-space-pen-views": "^2.2.0",
-    "fs-plus": "^2.10.1",
+    "fs-plus": "^3.0.0",
     "later": "^1.2.0",
     "moment": "^2.18.1",
-    "season": "^5.4.1"
+    "season": "^6.0.0"
   },
   "devDependencies": {
     "eslint": "^3.4.0",

@@ -15,6 +15,9 @@ branches:
   only:
     - master
 
+install:
+  - npm install --global eslint
+
 version: "{build}"
 platform: x64
 clone_depth: 10

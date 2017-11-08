@@ -25,16 +25,18 @@
   ],
   "dependencies": {
     "atom-space-pen-views": "^2.2.0",
-    "fs-plus": "^3.0.0",
+    "fs-plus": "^3.0.1",
     "later": "^1.2.0",
-    "moment": "^2.18.1",
-    "season": "^6.0.0"
+    "moment": "^2.19.1",
+    "season": "^6.0.2"
   },
   "devDependencies": {
-    "eslint": "^3.18.0",
-    "eslint-config-standard": "^7.1.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^2.1.1"
+    "eslint": "^4.10.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1"
   },
   "scripts": {
     "test": "eslint . && apm test",

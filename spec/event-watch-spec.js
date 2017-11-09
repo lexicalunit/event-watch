@@ -50,7 +50,7 @@ describe('EventWatch', function () {
 
   describe('after deactivate', function () {
     it('removes the element', function () {
-      expect(EventWatch.element.element).toExist()
+      expect(EventWatch.element).toBeTruthy()
       atom.packages.deactivatePackage('event-watch')
       expect(EventWatch.element).toBeNull()
     })

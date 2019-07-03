@@ -25,18 +25,18 @@
   ],
   "dependencies": {
     "etch": "^0.14.0",
-    "fs-plus": "^3.0.1",
+    "fs-plus": "^3.1.1",
     "later": "^1.2.0",
-    "moment": "^2.20.1",
+    "moment": "^2.24.0",
     "season": "^6.0.2"
   },
   "devDependencies": {
-    "eslint": "^5.4.0",
-    "eslint-config-standard": "^11.0.0-beta.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0"
   },
   "scripts": {
     "test": "eslint . && apm test",

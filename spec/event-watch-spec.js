@@ -4,7 +4,7 @@ describe('EventWatch', function () {
   let EventWatch
 
   beforeEach(function () {
-    let workspaceElement = atom.views.getView(atom.workspace)
+    const workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
     let statusBar
@@ -34,7 +34,7 @@ describe('EventWatch', function () {
         test4: 'every 7 mins'
       })
       EventWatch.element.update()
-      let e = EventWatch.element.element
+      const e = EventWatch.element.element
       expect(e.classList.contains('event-watch')).toBeTruthy()
       expect(e.classList.contains('inline-block')).toBeTruthy()
       expect(e.children[0].innerHTML).toContain('test1,6:30am,an hour')
